@@ -1,6 +1,8 @@
 import {createFilter} from './create-filter';
 import {createTripPoint} from './create-trip-point';
 
+const DEFAULT_TRIP_POINTS_COUNT = 7;
+
 const filtersData = [
   {name: `Everything`, isChecked: true},
   {name: `Future`, isChecked: false},
@@ -26,4 +28,4 @@ const renderFilters = (data) => {
 };
 
 renderFilters(filtersData);
-renderTripPoints(4);
+renderTripPoints(DEFAULT_TRIP_POINTS_COUNT);
