@@ -28,11 +28,11 @@ const renderTripPoints = (count) => {
   tripPointsContainer.innerHTML = tripPoints.join(``);
 };
 
-const onFiltersChange = () => {
+const onFiltersContainerChange = () => {
   renderTripPoints(createRandomIntegerNumber(0, MAX_TRIP_POINTS_COUNT));
 };
 
 renderFilters(filtersData);
 renderTripPoints(DEFAULT_TRIP_POINTS_COUNT);
 
-filtersContainer.addEventListener(`change`, onFiltersChange);
+filtersContainer.addEventListener(`change`, onFiltersContainerChange);
