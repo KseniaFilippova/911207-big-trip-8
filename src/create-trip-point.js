@@ -1,8 +1,11 @@
-const createTripPointOffer = (offerName) => `
+const createTripPointOffer = (offer) => `
   <li>
-    <button class="trip-point__offer">${offerName}</button>
+    <button class="trip-point__offer">${offer[0]} + €${offer[1]}</button>
   </li>
 `;
+
+const getHours = (milliseconds) => Math.floor(milliseconds / 3600000);
+const getMinutes = (milliseconds) => Math.floor((milliseconds % 3600000) / 60000);
 
 const createTripPoint = (data) => {
   const timeOptions = {
@@ -12,8 +15,8 @@ const createTripPoint = (data) => {
   const startTime = data.start.toLocaleString(`ru`, timeOptions);
   const endTime = data.end.toLocaleString(`ru`, timeOptions);
   const duration = data.end - data.start;
-  const hoursDuration = Math.floor(duration / 3600000);
-  const minutesDuration = Math.floor((duration % 3600000) / 60000);
+  const hoursDuration = getHours(duration);
+  const minutesDuration = getMinutes(duration);
 
   let offers = ``;
   if (data.offers) {

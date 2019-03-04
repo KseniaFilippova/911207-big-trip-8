@@ -13,7 +13,12 @@ const ICONS = {
   restaurant: `🍴`,
 };
 
-const OFFERS = [`Add luggage`, `Switch to comfort class`, `Add meal`, `Choose seats`];
+const OFFERS = new Map([
+  [`Add luggage`, 20],
+  [`Switch to comfort class`, 50],
+  [`Add meal`, 30],
+  [`Choose seats`, 15]
+]);
 const OFFERS_MIN_COUNT = 0;
 const OFFERS_MAX_COUNT = 2;
 
@@ -46,7 +51,7 @@ const createRandomList = (originalList, minCount, maxCount) => {
 const tripPointData = {
   icon: ICONS[TRIP_TYPES[createRandomIntegerNumber(0, TRIP_TYPES.length - 1)]],
   picture: `http://picsum.photos/300/150?r=${Math.random()}`,
-  offers: new Set(createRandomList(OFFERS, OFFERS_MIN_COUNT, OFFERS_MAX_COUNT)),
+  offers: new Map(createRandomList([...OFFERS], OFFERS_MIN_COUNT, OFFERS_MAX_COUNT)),
   description: createRandomList(DESCRIPTIONS, DESCRIPTIONS_MIN_COUNT, DESCRIPTIONS_MAX_COUNT).join(` `),
   start: new Date(),
   end: new Date(Date.now() + createRandomIntegerNumber(1, 3) * 60 * 60 * 1000),
