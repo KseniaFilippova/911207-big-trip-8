@@ -1,6 +1,37 @@
 import {getHours, getMinutes} from './time-utils';
 import {createElement} from './create-element';
 
+const timeOptions = {
+  hour: `numeric`,
+  minute: `numeric`,
+};
+const tripTypes = {
+  'taxi': {
+    icon: `🚕`,
+    action: `Taxi ride to`,
+  },
+  'bus': {
+    icon: `🚌`,
+    action: `Bus ride to`,
+  },
+  'train': {
+    icon: `🚂`,
+    action: `Train ride to`,
+  },
+  'flight': {
+    icon: `✈`,
+    action: `Flight to`,
+  },
+  'check-in': {
+    icon: `🏨`,
+    action: `Check in`,
+  },
+  'sightseeing': {
+    icon: `🏛`,
+    action: `Sightseeing`,
+  },
+};
+
 class TripPoint {
   constructor(data) {
     this._type = data.type;
@@ -10,42 +41,10 @@ class TripPoint {
     this._price = data.price;
     this._offers = data.offers;
 
-    this._timeOptions = {
-      hour: `numeric`,
-      minute: `numeric`,
-    };
-    this._startTime = this._start.toLocaleString(`ru`, this._timeOptions);
-    this._endTime = this._end.toLocaleString(`ru`, this._timeOptions);
-
+    this._startTime = this._start.toLocaleString(`ru`, timeOptions);
+    this._endTime = this._end.toLocaleString(`ru`, timeOptions);
     this._hoursDuration = getHours(this._end - this._start);
     this._minutesDuration = getMinutes(this._end - this._start);
-
-    this._tripTypes = {
-      'taxi': {
-        icon: `🚕`,
-        action: `Taxi ride to`,
-      },
-      'bus': {
-        icon: `🚌`,
-        action: `Bus ride to`,
-      },
-      'train': {
-        icon: `🚂`,
-        action: `Train ride to`,
-      },
-      'flight': {
-        icon: `✈`,
-        action: `Flight to`,
-      },
-      'check-in': {
-        icon: `🏨`,
-        action: `Check in`,
-      },
-      'sightseeing': {
-        icon: `🏛`,
-        action: `Sightseeing`,
-      },
-    };
 
     this._element = null;
 
@@ -86,8 +85,8 @@ class TripPoint {
   get _template() {
     return `
       <article class = "trip-point">
-        <i class="trip-icon">${this._tripTypes[this._type].icon}</i>
-        <h3 class="trip-point__title">${this._tripTypes[this._type].action} ${this._city}</h3>
+        <i class="trip-icon">${tripTypes[this._type].icon}</i>
+        <h3 class="trip-point__title">${tripTypes[this._type].action} ${this._city}</h3>
         <p class="trip-point__schedule">
           <span class="trip-point__timetable">${this._startTime}&nbsp;— ${this._endTime}</span>
           <span class="trip-point__duration">${this._hoursDuration}h ${this._minutesDuration}m</span>

@@ -1,5 +1,40 @@
 import {createElement} from './create-element';
 
+const dayOptions = {
+  day: `numeric`,
+  month: `long`,
+};
+const timeOptions = {
+  hour: `numeric`,
+  minute: `numeric`,
+};
+const tripTypes = {
+  'taxi': {
+    icon: `🚕`,
+    action: `Taxi ride to`,
+  },
+  'bus': {
+    icon: `🚌`,
+    action: `Bus ride to`,
+  },
+  'train': {
+    icon: `🚂`,
+    action: `Train ride to`,
+  },
+  'flight': {
+    icon: `✈`,
+    action: `Flight to`,
+  },
+  'check-in': {
+    icon: `🏨`,
+    action: `Check in`,
+  },
+  'sightseeing': {
+    icon: `🏛`,
+    action: `Sightseeing`,
+  },
+};
+
 let tripPointId = 0;
 
 class TripPointEdit {
@@ -14,45 +49,9 @@ class TripPointEdit {
     this._pictures = data.pictures;
     this._isFavorite = data.isFavorite;
 
-    this._dayOptions = {
-      day: `numeric`,
-      month: `long`,
-    };
-    this._day = this._start.toLocaleString(`en-GB`, this._dayOptions);
-
-    this._timeOptions = {
-      hour: `numeric`,
-      minute: `numeric`,
-    };
-    this._startTime = this._start.toLocaleString(`ru`, this._timeOptions);
-    this._endTime = this._end.toLocaleString(`ru`, this._timeOptions);
-
-    this._tripTypes = {
-      'taxi': {
-        icon: `🚕`,
-        action: `Taxi ride to`,
-      },
-      'bus': {
-        icon: `🚌`,
-        action: `Bus ride to`,
-      },
-      'train': {
-        icon: `🚂`,
-        action: `Train ride to`,
-      },
-      'flight': {
-        icon: `✈`,
-        action: `Flight to`,
-      },
-      'check-in': {
-        icon: `🏨`,
-        action: `Check in`,
-      },
-      'sightseeing': {
-        icon: `🏛`,
-        action: `Sightseeing`,
-      },
-    };
+    this._day = this._start.toLocaleString(`en-GB`, dayOptions);
+    this._startTime = this._start.toLocaleString(`ru`, timeOptions);
+    this._endTime = this._end.toLocaleString(`ru`, timeOptions);
 
     this._element = null;
 
@@ -133,7 +132,7 @@ class TripPointEdit {
             </label>
 
             <div class="travel-way">
-              <label class="travel-way__label" for="travel-way__toggle${tripPointId}">${this._tripTypes[this._type].icon}</label>
+              <label class="travel-way__label" for="travel-way__toggle${tripPointId}">${tripTypes[this._type].icon}</label>
 
               <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle${tripPointId}">
 
@@ -169,7 +168,7 @@ class TripPointEdit {
             </div>
 
             <div class="point__destination-wrap">
-              <label class="point__destination-label" for="destination${tripPointId}">${this._tripTypes[this._type].action}</label>
+              <label class="point__destination-label" for="destination${tripPointId}">${tripTypes[this._type].action}</label>
               <input class="point__destination-input" list="destination-select" id="destination${tripPointId}" value="${this._city}" name="destination">
               <datalist id="destination-select">
                 <option value="airport"></option>
