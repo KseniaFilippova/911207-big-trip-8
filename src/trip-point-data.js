@@ -1,17 +1,8 @@
-const TRIP_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `checkIn`, `sightseeing`, `restaurant`];
+const TRIP_TYPES = [`taxi`, `bus`, `train`, `flight`, `check-in`, `sightseeing`];
+const CITIES = [`Chamonix`, `Geneva`, `Paris`, `Moscow`];
 
-const ICONS = {
-  taxi: `🚕`,
-  bus: `🚌`,
-  train: `🚂`,
-  ship: `🛳️`,
-  transport: `🚊`,
-  drive: `🚗`,
-  flight: `✈️`,
-  checkIn: `🏨`,
-  sightseeing: `🏛️`,
-  restaurant: `🍴`,
-};
+const MIN_PRICE = 10;
+const MAX_PRICE = 100;
 
 const OFFERS = new Map([
   [`Add luggage`, 20],
@@ -36,9 +27,6 @@ const DESCRIPTIONS = [
 const DESCRIPTIONS_MIN_COUNT = 1;
 const DESCRIPTIONS_MAX_COUNT = 3;
 
-const MIN_PRICE = 10;
-const MAX_PRICE = 100;
-
 const compareRandom = () => Math.random() - 0.5;
 const createRandomIntegerNumber = (minNumber, maxNumber) => Math.floor(minNumber + Math.random() * (maxNumber + 1 - minNumber));
 const createRandomList = (originalList, minCount, maxCount) => {
@@ -49,13 +37,20 @@ const createRandomList = (originalList, minCount, maxCount) => {
 };
 
 const tripPointData = {
-  icon: ICONS[TRIP_TYPES[createRandomIntegerNumber(0, TRIP_TYPES.length - 1)]],
-  picture: `http://picsum.photos/300/150?r=${Math.random()}`,
-  offers: new Map(createRandomList([...OFFERS], OFFERS_MIN_COUNT, OFFERS_MAX_COUNT)),
-  description: createRandomList(DESCRIPTIONS, DESCRIPTIONS_MIN_COUNT, DESCRIPTIONS_MAX_COUNT).join(` `),
+  type: TRIP_TYPES[createRandomIntegerNumber(0, TRIP_TYPES.length - 1)],
+  city: CITIES[createRandomIntegerNumber(0, CITIES.length - 1)],
   start: new Date(),
   end: new Date(Date.now() + createRandomIntegerNumber(1, 3) * 60 * 60 * 1000),
   price: createRandomIntegerNumber(MIN_PRICE, MAX_PRICE),
+  offers: new Map(createRandomList([...OFFERS], OFFERS_MIN_COUNT, OFFERS_MAX_COUNT)),
+  description: createRandomList(DESCRIPTIONS, DESCRIPTIONS_MIN_COUNT, DESCRIPTIONS_MAX_COUNT).join(` `),
+  pictures: new Set([
+    `http://picsum.photos/300/150?r=${Math.random()}`,
+    `http://picsum.photos/300/150?r=${Math.random()}`,
+    `http://picsum.photos/300/150?r=${Math.random()}`,
+    `http://picsum.photos/300/150?r=${Math.random()}`
+  ]),
+  isFavorite: true,
 };
 
 export {tripPointData};
