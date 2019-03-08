@@ -1,5 +1,5 @@
+import {Component} from './component';
 import {getHours, getMinutes} from './time-utils';
-import {createElement} from './create-element';
 
 const timeOptions = {
   hour: `numeric`,
@@ -32,8 +32,9 @@ const tripTypes = {
   },
 };
 
-class TripPoint {
+class TripPoint extends Component {
   constructor(data) {
+    super();
     this._type = data.type;
     this._city = data.city;
     this._start = data.start;
@@ -46,28 +47,12 @@ class TripPoint {
     this._hoursDuration = getHours(this._end - this._start);
     this._minutesDuration = getMinutes(this._end - this._start);
 
-    this._element = null;
-
     this._onClick = null;
     this._onTripPointClick = this._onTripPointClickFn.bind(this);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._template);
-      this._bind();
-    }
-
-    return this._element;
-  }
-
   set onClick(fn) {
     this._onClick = fn;
-  }
-
-  destroy() {
-    this._unbind();
-    this._element = null;
   }
 
   _createTripPointOffer([offerName, offerPrice]) {

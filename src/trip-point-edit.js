@@ -1,4 +1,4 @@
-import {createElement} from './create-element';
+import {Component} from './component';
 
 const dayOptions = {
   day: `numeric`,
@@ -37,8 +37,9 @@ const tripTypes = {
 
 let tripPointId = 0;
 
-class TripPointEdit {
+class TripPointEdit extends Component{
   constructor(data) {
+    super();
     this._type = data.type;
     this._city = data.city;
     this._start = data.start;
@@ -53,22 +54,11 @@ class TripPointEdit {
     this._startTime = this._start.toLocaleString(`ru`, timeOptions);
     this._endTime = this._end.toLocaleString(`ru`, timeOptions);
 
-    this._element = null;
-
     this._onSubmit = null;
     this._onSubmitButtonClick = this._onSubmitButtonClickFn.bind(this);
 
     this._onReset = null;
     this._onResetButtonClick = this._onResetButtonClickFn.bind(this);
-  }
-
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._template);
-      this._bind();
-    }
-
-    return this._element;
   }
 
   set onSubmit(fn) {
@@ -77,11 +67,6 @@ class TripPointEdit {
 
   set onReset(fn) {
     this._onReset = fn;
-  }
-
-  destroy() {
-    this._unbind();
-    this._element = null;
   }
 
   _createTripPointOffer([offerName, offerPrice]) {
