@@ -1,13 +1,13 @@
 import {createElement} from './create-element';
 
 class Component {
-   constructor() {
-       if (new.target === Component) {
-           throw new Error(`Can't instantiate Component, only concrete one.`);
-       }
+  constructor() {
+    if (new.target === Component) {
+      throw new Error(`Can't instantiate Component, only concrete one.`);
+    }
 
-       this._element = null;
-   }
+    this._element = null;
+  }
 
   get element() {
     if (!this._element) {

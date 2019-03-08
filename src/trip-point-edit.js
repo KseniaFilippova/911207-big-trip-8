@@ -37,7 +37,7 @@ const tripTypes = {
 
 let tripPointId = 0;
 
-class TripPointEdit extends Component{
+class TripPointEdit extends Component {
   constructor(data) {
     super();
     this._type = data.type;
