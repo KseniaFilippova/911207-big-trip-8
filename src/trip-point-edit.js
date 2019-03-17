@@ -87,10 +87,6 @@ class TripPointEdit extends Component {
     this._pictures = data.pictures;
     this._isFavorite = data.isFavorite;
 
-    this._day = moment(this._start).format(`MMM D`);
-    this._startTime = moment(this._start).format(`HH:mm`);
-    this._endTime = moment(this._end).format(`HH:mm`);
-
     this._onSubmit = null;
     this._onSubmitButtonClick = this._onSubmitButtonClickFn.bind(this);
 
@@ -108,9 +104,6 @@ class TripPointEdit extends Component {
     this._price = data.price;
     this._offers = data.offers;
     this._isFavorite = data.isFavorite;
-    this._day = moment(this._start).format(`MMM D`);
-    this._startTime = moment(this._start).format(`HH:mm`);
-    this._endTime = moment(this._end).format(`HH:mm`);
   }
 
   set onSubmit(fn) {
@@ -165,7 +158,7 @@ class TripPointEdit extends Component {
           <header class="point__header">
             <label class="point__date">
               choose day
-              <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${this._day}">
+              <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${moment(this._start).format(`MMM D`)}">
             </label>
 
             <div class="travel-way">
@@ -217,8 +210,8 @@ class TripPointEdit extends Component {
 
             <label class="point__time">
               choose time
-              <input class="point__input" type="text" value="${this._startTime}" name="startTime" placeholder="00:00">
-              <input class="point__input" type="text" value="${this._endTime}" name="endTime" placeholder="00:00">
+              <input class="point__input" type="text" value="${moment(this._start).format(`HH:mm`)}" name="startTime" placeholder="00:00">
+              <input class="point__input" type="text" value="${moment(this._end).format(`HH:mm`)}" name="endTime" placeholder="00:00">
             </label>
 
             <label class="point__price">
@@ -327,8 +320,8 @@ class TripPointEdit extends Component {
 
   _bind() {
     flatpickr(this.element.querySelector(`input[name="day"]`), {altInput: true, altFormat: `M j`, dateFormat: `M-j`});
-    flatpickr(this.element.querySelector(`input[name="startTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});
-    flatpickr(this.element.querySelector(`input[name="endTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});
+    flatpickr(this.element.querySelector(`input[name="startTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});// eslint-disable-line camelcase
+    flatpickr(this.element.querySelector(`input[name="endTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});// eslint-disable-line camelcase
 
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onResetButtonClick);

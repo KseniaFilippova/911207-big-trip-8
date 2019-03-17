@@ -37,13 +37,7 @@ const renderTripPoints = (count) => {
     };
 
     tripPointEdit.onSubmit = (newData) => {
-      tripPointData.type = newData.type;
-      tripPointData.city = newData.city;
-      tripPointData.start = newData.start;
-      tripPointData.end = newData.end;
-      tripPointData.price = newData.price;
-      tripPointData.offers = newData.offers;
-      tripPointData.isFavorite = newData.isFavorite;
+      Object.assign(tripPointData, newData);
 
       tripPoint.updateData(tripPointData);
 

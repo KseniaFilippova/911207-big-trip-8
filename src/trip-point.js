@@ -50,10 +50,6 @@ class TripPoint extends Component {
     this._price = data.price;
     this._offers = data.offers;
 
-    this._startTime = moment(this._start).format(`HH:mm`);
-    this._endTime = moment(this._end).format(`HH:mm`);
-    this._duration = getDuration(this._start, this._end);
-
     this._onClick = null;
     this._onTripPointClick = this._onTripPointClick.bind(this);
   }
@@ -65,9 +61,6 @@ class TripPoint extends Component {
     this._end = data.end;
     this._price = data.price;
     this._offers = data.offers;
-    this._startTime = moment(this._start).format(`HH:mm`);
-    this._endTime = moment(this._end).format(`HH:mm`);
-    this._duration = getDuration(this._start, this._end);
   }
 
   set onClick(fn) {
@@ -92,8 +85,8 @@ class TripPoint extends Component {
         <i class="trip-icon">${tripTypes[this._type].icon}</i>
         <h3 class="trip-point__title">${tripTypes[this._type].action} ${this._city}</h3>
         <p class="trip-point__schedule">
-          <span class="trip-point__timetable">${this._startTime}&nbsp;— ${this._endTime}</span>
-          <span class="trip-point__duration">${this._duration}</span>
+          <span class="trip-point__timetable">${moment(this._start).format(`HH:mm`)}&nbsp;— ${moment(this._end).format(`HH:mm`)}</span>
+          <span class="trip-point__duration">${getDuration(this._start, this._end)}</span>
         </p>
         <p class="trip-point__price">€&nbsp;${this._price}</p>
         <ul class="trip-point__offers">
