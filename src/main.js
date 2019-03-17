@@ -27,25 +27,33 @@ const renderTripPoints = (count) => {
 
   for (let i = 0; i < count; i++) {
     const tripPoint = new TripPoint(tripPointData);
-    const tripPointElement = tripPoint.element;
-
     const tripPointEdit = new TripPointEdit(tripPointData);
-    const tripPointEditElement = tripPointEdit.element;
 
-    tripPointsContainer.appendChild(tripPointElement);
+    tripPointsContainer.appendChild(tripPoint.element);
 
     tripPoint.onClick = () => {
-      tripPointsContainer.replaceChild(tripPointEditElement, tripPointElement);
+      tripPointsContainer.replaceChild(tripPointEdit.element, tripPoint.element);
+      tripPoint.destroy();
     };
 
-    tripPointEdit.onSubmit = () => {
-      tripPointsContainer.replaceChild(tripPointElement, tripPointEditElement);
+    tripPointEdit.onSubmit = (newData) => {
+      tripPointData.type = newData.type;
+      tripPointData.city = newData.city;
+      tripPointData.start = newData.start;
+      tripPointData.end = newData.end;
+      tripPointData.price = newData.price;
+      tripPointData.offers = newData.offers;
+      tripPointData.isFavorite = newData.isFavorite;
+
+      tripPoint.updateData(tripPointData);
+
+      tripPointsContainer.replaceChild(tripPoint.element, tripPointEdit.element);
+      tripPointEdit.destroy();
     };
 
     tripPointEdit.onReset = () => {
-      tripPoint.destroy();
+      tripPointsContainer.removeChild(tripPointEdit.element);
       tripPointEdit.destroy();
-      tripPointsContainer.removeChild(tripPointEditElement);
     };
   }
 };

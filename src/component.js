@@ -23,6 +23,8 @@ class Component {
     this._element = null;
   }
 
+  update() {}
+
   get _template() {}
 
   _bind() {}
