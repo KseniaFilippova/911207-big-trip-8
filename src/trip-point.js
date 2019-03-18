@@ -1,10 +1,6 @@
 import {Component} from './component';
-import {getHours, getMinutes} from './time-utils';
+import moment from 'moment';
 
-const timeOptions = {
-  hour: `numeric`,
-  minute: `numeric`,
-};
 const tripTypes = {
   'taxi': {
     icon: `🚕`,
@@ -31,6 +27,18 @@ const tripTypes = {
     action: `Sightseeing`,
   },
 };
+const offersPrices = {
+  'Add luggage': 20,
+  'Switch to comfort class': 50,
+  'Add meal': 30,
+  'Choose seats': 15,
+};
+
+const getDuration = (startDate, endDate) => {
+  const diff = moment(endDate).diff(moment(startDate));
+
+  return moment.utc(diff).format(`H[H] m[M]`);
+};
 
 class TripPoint extends Component {
   constructor(data) {
@@ -42,23 +50,27 @@ class TripPoint extends Component {
     this._price = data.price;
     this._offers = data.offers;
 
-    this._startTime = this._start.toLocaleString(`ru`, timeOptions);
-    this._endTime = this._end.toLocaleString(`ru`, timeOptions);
-    this._hoursDuration = getHours(this._end - this._start);
-    this._minutesDuration = getMinutes(this._end - this._start);
-
     this._onClick = null;
-    this._onTripPointClick = this._onTripPointClickFn.bind(this);
+    this._onTripPointClick = this._onTripPointClick.bind(this);
+  }
+
+  updateData(data) {
+    this._type = data.type;
+    this._city = data.city;
+    this._start = data.start;
+    this._end = data.end;
+    this._price = data.price;
+    this._offers = data.offers;
   }
 
   set onClick(fn) {
     this._onClick = fn;
   }
 
-  _createTripPointOffer([offerName, offerPrice]) {
+  _createTripPointOffer(offerName) {
     return `
       <li>
-        <button class="trip-point__offer">${offerName} + €${offerPrice}</button>
+        <button class="trip-point__offer">${offerName} + €${offersPrices[offerName]}</button>
       </li>
     `;
   }
@@ -73,8 +85,8 @@ class TripPoint extends Component {
         <i class="trip-icon">${tripTypes[this._type].icon}</i>
         <h3 class="trip-point__title">${tripTypes[this._type].action} ${this._city}</h3>
         <p class="trip-point__schedule">
-          <span class="trip-point__timetable">${this._startTime}&nbsp;— ${this._endTime}</span>
-          <span class="trip-point__duration">${this._hoursDuration}h ${this._minutesDuration}m</span>
+          <span class="trip-point__timetable">${moment(this._start).format(`HH:mm`)}&nbsp;— ${moment(this._end).format(`HH:mm`)}</span>
+          <span class="trip-point__duration">${getDuration(this._start, this._end)}</span>
         </p>
         <p class="trip-point__price">€&nbsp;${this._price}</p>
         <ul class="trip-point__offers">
@@ -84,7 +96,7 @@ class TripPoint extends Component {
     `.trim();
   }
 
-  _onTripPointClickFn() {
+  _onTripPointClick() {
     if (typeof this._onClick === `function`) {
       this._onClick();
     }
