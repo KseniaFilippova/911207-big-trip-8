@@ -633,3 +633,10 @@ input[type=radio]:checked + .trip-sorting__item {
 .travel-way__toggle:checked + .travel-way__select {
   display: block;
 }
+.statistic {
+  padding: 50px 0;
+}
+.statistic__item {
+  margin-bottom: 95px;
+  width: 900px;
+}
