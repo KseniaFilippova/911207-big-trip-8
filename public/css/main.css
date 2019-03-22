@@ -306,7 +306,7 @@ input[type=radio]:checked + .trip-sorting__item {
   margin: 0;
   padding: 0;
   padding-right: 16px;
-  padding-top: 12px;
+  align-self: center;
   box-sizing: border-box;
 }
 
@@ -332,14 +332,13 @@ input[type=radio]:checked + .trip-sorting__item {
   flex-basis: 112px;
   margin: 0;
   padding: 0;
-  padding-top: 10px;
+  align-self: center;
 }
 
 .trip-point__offers {
   list-style: none;
   margin: 0;
   padding: 0;
-  width: 230px;
 }
 
 .trip-point__offer {
@@ -393,7 +392,6 @@ input[type=radio]:checked + .trip-sorting__item {
   padding: 0 15px;
 }
 .point__date {
-  display: none;
   font-size: 0;
   width: 55px;
   margin-right: 5px;
@@ -427,33 +425,44 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 
 .point__destination-label {
-  position: absolute;
-  left: 2px;
-  top: -19px;
-  max-width: 240px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  color: #999999;
+  margin-right: 5px;
   white-space: nowrap;
+  max-width: 100px;
+  color: #999999;
+  text-overflow: ellipsis;
 }
 .point__destination-input {
   border: 0;
   padding: 0;
   outline: 0;
   display: flex;
+  flex-basis: 200px;
+  flex-shrink: 1;
   width: 100%;
 }
 .point__destination-input::-webkit-calendar-picker-indicator {
   display: none;
 }
 .point__time {
+  display: flex;
+  position: relative;
   font-size: 0;
   width: 130px;
   margin-right: 40px;
-  display: flex;
+}
+.point__time::after {
+  position: absolute;
+  top: 0;
+  left: 56px;
+  content: "—";
+  font-size: 17px;
 }
 .point__time .point__input {
   font-size: 17px;
+  text-align: left;
+}
+.point__time .point__input:last-child {
+  text-align: right;
 }
 .point__price {
   display: flex;
@@ -623,12 +632,4 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 .travel-way__toggle:checked + .travel-way__select {
   display: block;
-}
-
-.statistic {
-  padding: 50px 0;
-}
-.statistic__item {
-  margin-bottom: 95px;
-  width: 900px;
 }
