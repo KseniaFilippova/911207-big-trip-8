@@ -1,38 +1,8 @@
 import {Component} from './component';
-import moment from 'moment';
+import {tripTypesData} from './trip-types-data';
+import {offersPricesData} from './offers-prices-data';
 
-const tripTypes = {
-  'taxi': {
-    icon: `🚕`,
-    action: `Taxi ride to`,
-  },
-  'bus': {
-    icon: `🚌`,
-    action: `Bus ride to`,
-  },
-  'train': {
-    icon: `🚂`,
-    action: `Train ride to`,
-  },
-  'flight': {
-    icon: `✈`,
-    action: `Flight to`,
-  },
-  'check-in': {
-    icon: `🏨`,
-    action: `Check in`,
-  },
-  'sightseeing': {
-    icon: `🏛`,
-    action: `Sightseeing`,
-  },
-};
-const offersPrices = {
-  'Add luggage': 20,
-  'Switch to comfort class': 50,
-  'Add meal': 30,
-  'Choose seats': 15,
-};
+import moment from 'moment';
 
 const getDuration = (startDate, endDate) => {
   const diff = moment(endDate).diff(moment(startDate));
@@ -70,7 +40,7 @@ class TripPoint extends Component {
   _createTripPointOffer(offerName) {
     return `
       <li>
-        <button class="trip-point__offer">${offerName} + €${offersPrices[offerName]}</button>
+        <button class="trip-point__offer">${offerName} + €${offersPricesData[offerName]}</button>
       </li>
     `;
   }
@@ -82,8 +52,8 @@ class TripPoint extends Component {
   get _template() {
     return `
       <article class = "trip-point">
-        <i class="trip-icon">${tripTypes[this._type].icon}</i>
-        <h3 class="trip-point__title">${tripTypes[this._type].action} ${this._city}</h3>
+        <i class="trip-icon">${tripTypesData[this._type].icon}</i>
+        <h3 class="trip-point__title">${tripTypesData[this._type].action} ${this._city}</h3>
         <p class="trip-point__schedule">
           <span class="trip-point__timetable">${moment(this._start).format(`HH:mm`)}&nbsp;— ${moment(this._end).format(`HH:mm`)}</span>
           <span class="trip-point__duration">${getDuration(this._start, this._end)}</span>

@@ -1,3 +1,5 @@
+const DEFAULT_TRIP_POINTS_COUNT = 7;
+
 const TRIP_TYPES = [`taxi`, `bus`, `train`, `flight`, `check-in`, `sightseeing`];
 const CITIES = [`Chamonix`, `Geneva`, `Paris`, `Moscow`];
 
@@ -53,4 +55,15 @@ const tripPointData = {
   isFavorite: true,
 };
 
-export {tripPointData};
+const createTripPointsData = (count) => {
+  const tripPointsData = [];
+  for (let i = 0; i < count; i++) {
+    tripPointsData.push(Object.assign({}, tripPointData));
+  }
+
+  return tripPointsData;
+};
+
+const tripPointsData = createTripPointsData(DEFAULT_TRIP_POINTS_COUNT);
+
+export {tripPointsData};

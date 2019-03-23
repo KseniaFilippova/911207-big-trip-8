@@ -1,39 +1,9 @@
 import {Component} from './component';
+import {tripTypesData} from './trip-types-data';
+import {offersPricesData} from './offers-prices-data';
+
 import flatpickr from 'flatpickr';
 import moment from 'moment';
-
-const tripTypes = {
-  'taxi': {
-    icon: `🚕`,
-    action: `Taxi ride to`,
-  },
-  'bus': {
-    icon: `🚌`,
-    action: `Bus ride to`,
-  },
-  'train': {
-    icon: `🚂`,
-    action: `Train ride to`,
-  },
-  'flight': {
-    icon: `✈`,
-    action: `Flight to`,
-  },
-  'check-in': {
-    icon: `🏨`,
-    action: `Check in`,
-  },
-  'sightseeing': {
-    icon: `🏛`,
-    action: `Sightseeing`,
-  },
-};
-const offersPrices = {
-  'Add luggage': 20,
-  'Switch to comfort class': 50,
-  'Add meal': 30,
-  'Choose seats': 15,
-};
 
 const createMapper = (target) => {
   return {
@@ -44,9 +14,12 @@ const createMapper = (target) => {
       target.city = value;
     },
     day: (value) => {
-      const startDate = moment(value, [`MMM D`]);
-      target.start.setDate(startDate.date());
-      target.start.setMonth(startDate.month());
+      const date = moment(value, [`MMM D`]);
+      target.start.setDate(date.date());
+      target.start.setMonth(date.month());
+
+      target.end.setDate(date.date());
+      target.end.setMonth(date.month());
     },
     startTime: (value) => {
       const startTime = moment(value, [`HH:mm`]);
@@ -59,7 +32,7 @@ const createMapper = (target) => {
       target.end.setMinutes(endTime.minutes());
     },
     price: (value) => {
-      target.price = value;
+      target.price = parseInt(value, 10);
     },
     offer: (value) => target.offers.add(value),
     favorite: (value) => {
@@ -88,10 +61,10 @@ class TripPointEdit extends Component {
     this._isFavorite = data.isFavorite;
 
     this._onSubmit = null;
-    this._onSubmitButtonClick = this._onSubmitButtonClickFn.bind(this);
+    this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
 
-    this._onReset = null;
-    this._onResetButtonClick = this._onResetButtonClickFn.bind(this);
+    this._onDelete = null;
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
 
     this._onTripTypeClick = this._onTripTypeClick.bind(this);
   }
@@ -110,15 +83,15 @@ class TripPointEdit extends Component {
     this._onSubmit = fn;
   }
 
-  set onReset(fn) {
-    this._onReset = fn;
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   _createTripPointOffer(offerName) {
     return `
       <input class="point__offers-input visually-hidden" type="checkbox" id="${offerName}${tripPointId}" name="offer" value="${offerName}">
       <label for="${offerName}${tripPointId}" class="point__offers-label">
-        <span class="point__offer-service">${offerName}</span> + €<span class="point__offer-price">${offersPrices[offerName]}</span>
+        <span class="point__offer-service">${offerName}</span> + €<span class="point__offer-price">${offersPricesData[offerName]}</span>
       </label>
     `;
   }
@@ -162,7 +135,7 @@ class TripPointEdit extends Component {
             </label>
 
             <div class="travel-way">
-              <label class="travel-way__label" for="travel-way__toggle${tripPointId}">${tripTypes[this._type].icon}</label>
+              <label class="travel-way__label" for="travel-way__toggle${tripPointId}">${tripTypesData[this._type].icon}</label>
 
               <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle${tripPointId}">
 
@@ -198,7 +171,7 @@ class TripPointEdit extends Component {
             </div>
 
             <div class="point__destination-wrap">
-              <label class="point__destination-label" for="destination${tripPointId}">${tripTypes[this._type].action}</label>
+              <label class="point__destination-label" for="destination${tripPointId}">${tripTypesData[this._type].action}</label>
               <input class="point__destination-input" list="destination-select" id="destination${tripPointId}" value="${this._city}" name="destination">
               <datalist id="destination-select">
                 <option value="airport"></option>
@@ -290,7 +263,7 @@ class TripPointEdit extends Component {
     return entry;
   }
 
-  _onSubmitButtonClickFn(evt) {
+  _onSubmitButtonClick(evt) {
     evt.preventDefault();
 
     const formData = new FormData(this._element.querySelector(`form`));
@@ -303,10 +276,9 @@ class TripPointEdit extends Component {
     this.updateData(newData);
   }
 
-  _onResetButtonClickFn(evt) {
-    evt.preventDefault();
-    if (typeof this._onReset === `function`) {
-      this._onReset();
+  _onDeleteButtonClick() {
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
     }
   }
 
