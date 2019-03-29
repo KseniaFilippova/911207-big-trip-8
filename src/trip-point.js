@@ -1,6 +1,5 @@
 import {Component} from './component';
 import {tripTypesData} from './trip-types-data';
-import {offersPricesData} from './offers-prices-data';
 
 import moment from 'moment';
 
@@ -13,6 +12,7 @@ const getDuration = (startDate, endDate) => {
 class TripPoint extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._type = data.type;
     this._city = data.city;
     this._start = data.start;
@@ -37,16 +37,16 @@ class TripPoint extends Component {
     this._onClick = fn;
   }
 
-  _createTripPointOffer(offerName) {
+  _createTripPointOffer(offerInfo) {
     return `
       <li>
-        <button class="trip-point__offer">${offerName} + €${offersPricesData[offerName]}</button>
+        <button class="trip-point__offer">${offerInfo.title} + €${offerInfo.price}</button>
       </li>
     `;
   }
 
   get _tripOffers() {
-    return [...this._offers].map(this._createTripPointOffer).join(``);
+    return this._offers.filter((offer) => offer.accepted).map(this._createTripPointOffer).join(``);
   }
 
   get _template() {
