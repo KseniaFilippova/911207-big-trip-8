@@ -9,7 +9,7 @@ import {TripPointEdit} from './trip-point-edit';
 import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 
-const AUTHORIZATION = `Basic ei0w990or99080b`;
+const AUTHORIZATION = `Basic pi0w990or99080b`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
@@ -23,15 +23,14 @@ const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
 
+let tripPointsInfoPromise = api.getTripPoints();
+let possibleDestinationsPromise = api.getDestinations();
+let extraOffersPromise = api.getOffers();
+
 let moneyChart;
 let transportChart;
 
-const getFilterId = () => {
-  const filters = document.querySelectorAll(`input[name="filter"]`);
-  const checkedFilter = Array.from(filters).find((filter) => filter.checked === true);
-
-  return checkedFilter.id;
-};
+const getFilterId = () => document.querySelector(`input[name="filter"]:checked`).id;
 
 const renderFilteredTripPointsData = ([data, destinationsData, offersData]) => {
   const filterId = getFilterId();
@@ -57,42 +56,10 @@ const renderFilters = (data) => {
     filtersContainer.appendChild(filter.element);
 
     filter.onFilter = () => {
-      Promise.all([api.getTripPoints(), api.getDestinations(), api.getOffers()])
+      Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
         .then((values) => renderFilteredTripPointsData(values));
     };
   }
-};
-
-const blockTripPointOnSave = (tripPoint) => {
-  const saveButton = tripPoint.element.querySelector(`button[type="submit"]`);
-  saveButton.innerText = `Saving...`;
-  saveButton.disabled = true;
-
-  tripPoint.element.querySelector(`button[type="reset"]`).disabled = true;
-};
-
-const unblockTripPointOnSave = (tripPoint) => {
-  const saveButton = tripPoint.element.querySelector(`button[type="submit"]`);
-  saveButton.innerText = `Save`;
-  saveButton.disabled = false;
-
-  tripPoint.element.querySelector(`button[type="reset"]`).disabled = false;
-};
-
-const blockTripPointOnDelete = (tripPoint) => {
-  tripPoint.element.querySelector(`button[type="submit"]`).disabled = true;
-
-  const deleteButton = tripPoint.element.querySelector(`button[type="reset"]`);
-  deleteButton.innerText = `Deleting...`;
-  deleteButton.disabled = true;
-};
-
-const unblockTripPointOnDelete = (tripPoint) => {
-  tripPoint.element.querySelector(`button[type="submit"]`).disabled = false;
-
-  const deleteButton = tripPoint.element.querySelector(`button[type="reset"]`);
-  deleteButton.innerText = `Delete`;
-  deleteButton.disabled = false;
 };
 
 const renderTripPoints = (data, destinationsData, offersData) => {
@@ -112,32 +79,36 @@ const renderTripPoints = (data, destinationsData, offersData) => {
     tripPointEdit.onSubmit = (id, newData) => {
       Object.assign(tripPointData, newData);
 
-      blockTripPointOnSave(tripPointEdit);
+      tripPointEdit.blockTripPointOnSave();
 
       api.updateTripPoint(id, tripPointData.toRaw())
         .then((newTripPoint) => {
-          unblockTripPointOnSave(tripPointEdit);
+          tripPointEdit.unblockTripPointOnSave();
           tripPoint.updateData(newTripPoint);
           tripPointsContainer.replaceChild(tripPoint.element, tripPointEdit.element);
           tripPointEdit.destroy();
         })
         .catch(() => {
           tripPointEdit.shake();
-          unblockTripPointOnSave(tripPointEdit);
+          tripPointEdit.unblockTripPointOnSave();
         });
     };
 
     tripPointEdit.onDelete = (id) => {
-      blockTripPointOnDelete(tripPointEdit);
+      tripPointEdit.blockTripPointOnDelete();
 
       api.deleteTripPoint(id)
         .then(() => {
-          Promise.all([api.getTripPoints(), api.getDestinations(), api.getOffers()])
+          tripPointsInfoPromise = api.getTripPoints();
+          possibleDestinationsPromise = api.getDestinations();
+          extraOffersPromise = api.getOffers();
+
+          Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
             .then((values) => renderFilteredTripPointsData(values));
         })
         .catch(() => {
           tripPointEdit.shake();
-          unblockTripPointOnDelete(tripPointEdit);
+          tripPointEdit.unblockTripPointOnDelete();
         });
     };
   }
@@ -204,7 +175,7 @@ const onStatsButtonClick = (evt) => {
   evt.preventDefault();
 
   if (!tableContainer.classList.contains(`visually-hidden`)) {
-    api.getTripPoints().then(renderStats);
+    tripPointsInfoPromise.then(renderStats);
 
     tableContainer.classList.add(`visually-hidden`);
     statsContainer.classList.remove(`visually-hidden`);
@@ -213,7 +184,7 @@ const onStatsButtonClick = (evt) => {
 
 renderFilters(filtersData);
 
-Promise.all([api.getTripPoints(), api.getDestinations(), api.getOffers()])
+Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
   .then((values) => {
     emptyTripPointsContainer.innerText = `Loading route...`;
     renderFilteredTripPointsData(values);

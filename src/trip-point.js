@@ -14,10 +14,10 @@ class TripPoint extends Component {
     super();
     this._id = data.id;
     this._type = data.type;
-    this._city = data.city;
     this._start = data.start;
     this._end = data.end;
     this._price = data.price;
+    this._city = data.city;
     this._offers = data.offers;
 
     this._onClick = null;
@@ -26,10 +26,10 @@ class TripPoint extends Component {
 
   updateData(data) {
     this._type = data.type;
-    this._city = data.city;
     this._start = data.start;
     this._end = data.end;
     this._price = data.price;
+    this._city = data.city;
     this._offers = data.offers;
   }
 

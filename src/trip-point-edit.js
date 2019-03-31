@@ -52,14 +52,14 @@ class TripPointEdit extends Component {
     super();
     this._id = data.id;
     this._type = data.type;
-    this._city = data.city;
     this._start = data.start;
     this._end = data.end;
     this._price = data.price;
-    this._offers = data.offers;
+    this._isFavorite = data.isFavorite;
+    this._city = data.city;
     this._description = data.description;
     this._pictures = data.pictures;
-    this._isFavorite = data.isFavorite;
+    this._offers = data.offers;
 
     this._possibleDestinations = possibleDestinations;
     this._possibleOffers = possibleOffers;
@@ -76,12 +76,12 @@ class TripPointEdit extends Component {
 
   updateData(data) {
     this._type = data.type;
-    this._city = data.city;
     this._start = data.start;
     this._end = data.end;
     this._price = data.price;
-    this._offers = data.offers;
     this._isFavorite = data.isFavorite;
+    this._city = data.city;
+    this._offers = data.offers;
   }
 
   set onSubmit(fn) {
@@ -90,6 +90,38 @@ class TripPointEdit extends Component {
 
   set onDelete(fn) {
     this._onDelete = fn;
+  }
+
+  blockTripPointOnSave() {
+    const saveButton = this._element.querySelector(`button[type="submit"]`);
+    saveButton.innerText = `Saving...`;
+    saveButton.disabled = true;
+
+    this._element.querySelector(`button[type="reset"]`).disabled = true;
+  }
+
+  unblockTripPointOnSave() {
+    const saveButton = this._element.querySelector(`button[type="submit"]`);
+    saveButton.innerText = `Save`;
+    saveButton.disabled = false;
+
+    this._element.querySelector(`button[type="reset"]`).disabled = false;
+  }
+
+  blockTripPointOnDelete() {
+    this._element.querySelector(`button[type="submit"]`).disabled = true;
+
+    const deleteButton = this._element.querySelector(`button[type="reset"]`);
+    deleteButton.innerText = `Deleting...`;
+    deleteButton.disabled = true;
+  }
+
+  unblockTripPointOnDelete() {
+    this._element.querySelector(`button[type="submit"]`).disabled = false;
+
+    const deleteButton = this._element.querySelector(`button[type="reset"]`);
+    deleteButton.innerText = `Delete`;
+    deleteButton.disabled = false;
   }
 
   shake() {
@@ -293,12 +325,14 @@ class TripPointEdit extends Component {
   _processForm(formData) {
     const entry = {
       type: ``,
-      city: ``,
       start: new Date(),
       end: new Date(),
       price: 0,
-      offers: [],
       isFavorite: false,
+      city: this._city,
+      description: this._description,
+      pictures: this._pictures,
+      offers: []
     };
 
     const tripPointEditMapper = createMapper(entry);
@@ -345,10 +379,17 @@ class TripPointEdit extends Component {
     const destinationName = evt.target.value;
 
     if (destinationName) {
+      this._city = destinationName;
       const destinationInfo = this._possibleDestinations.find((destination) => destination.name === destinationName);
-      this._city = destinationInfo.name;
-      this._description = destinationInfo.description;
-      this._pictures = destinationInfo.pictures;
+
+      if (destinationInfo) {
+        this._description = destinationInfo.description;
+        this._pictures = destinationInfo.pictures;
+      } else {
+        this._description = `Unknown destination`;
+        this._pictures = [];
+      }
+
       this._updateElement();
     }
   }
