@@ -24,9 +24,9 @@ class Filter extends Component {
     `.trim();
   }
 
-  _onFilterClick(evt) {
+  _onFilterClick() {
     if (typeof this._onFilter === `function`) {
-      this._onFilter(evt);
+      this._onFilter();
     }
   }
 
