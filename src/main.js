@@ -111,6 +111,11 @@ const renderTripPoints = (data, destinationsData, offersData) => {
           tripPointEdit.unblockTripPointOnDelete();
         });
     };
+
+    tripPointEdit.onEscape = () => {
+      tripPointsContainer.replaceChild(tripPoint.element, tripPointEdit.element);
+      tripPointEdit.destroy();
+    };
   }
 };
 

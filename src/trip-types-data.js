@@ -11,6 +11,18 @@ const tripTypesData = {
     icon: `🚂`,
     action: `Train ride to`,
   },
+  'ship': {
+    icon: `🛳️`,
+    action: `Ship trip to`,
+  },
+  'transport': {
+    icon: `🚊`,
+    action: `Get to`,
+  },
+  'drive': {
+    icon: `🚗`,
+    action: `Drive to`,
+  },
   'flight': {
     icon: `✈`,
     action: `Flight to`,
@@ -22,6 +34,10 @@ const tripTypesData = {
   'sightseeing': {
     icon: `🏛`,
     action: `Sightseeing`,
+  },
+  'restaurant': {
+    icon: `🍴`,
+    action: `Visit`,
   },
 };
 

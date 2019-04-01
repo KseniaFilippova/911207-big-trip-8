@@ -4,6 +4,8 @@ import {tripTypesData} from './trip-types-data';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
 
+const ESC_KEYCODE = 27;
+
 const createMapper = (target) => {
   return {
     travelway: (value) => {
@@ -32,10 +34,17 @@ const createMapper = (target) => {
     },
     price: (value) => {
       target.price = parseInt(value, 10);
+      target.totalPrice = parseInt(value, 10);
     },
     offer: (value) => {
       const offerInfoArr = value.split(`_`);
-      target.offers.push({title: offerInfoArr[0], price: offerInfoArr[1], accepted: true});
+      const [offerTitle, offerPrice] = offerInfoArr;
+      target.offers.push({title: offerTitle, price: offerPrice, accepted: true});
+
+      target.totalPrice += parseInt(offerPrice, 10);
+    },
+    totalPrice: (value) => {
+      target.totalPrice = parseInt(value, 10);
     },
     favorite: (value) => {
       if (value === `on`) {
@@ -70,6 +79,9 @@ class TripPointEdit extends Component {
     this._onDelete = null;
     this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
 
+    this._onEscape = null;
+    this._onDocumentKeydown = this._onDocumentKeydown.bind(this);
+
     this._onTripTypeClick = this._onTripTypeClick.bind(this);
     this._onDestinationChange = this._onDestinationChange.bind(this);
   }
@@ -81,6 +93,8 @@ class TripPointEdit extends Component {
     this._price = data.price;
     this._isFavorite = data.isFavorite;
     this._city = data.city;
+    this._description = data.description;
+    this._pictures = data.pictures;
     this._offers = data.offers;
   }
 
@@ -90,6 +104,10 @@ class TripPointEdit extends Component {
 
   set onDelete(fn) {
     this._onDelete = fn;
+  }
+
+  set onEscape(fn) {
+    this._onEscape = fn;
   }
 
   blockTripPointOnSave() {
@@ -163,13 +181,19 @@ class TripPointEdit extends Component {
   }
 
   get _extraOffers() {
-    let extraOffers = this._possibleOffers.find((offers) => offers.type === this._type).offers;
+    const possibleOffers = this._possibleOffers.find((offers) => offers.type === this._type);
 
-    for (const offer of this._offers) {
-      extraOffers = extraOffers.filter((extraOffer) => extraOffer.name !== offer.title);
+    if (possibleOffers) {
+      let extraOffers = possibleOffers.offers;
+
+      for (const offer of this._offers) {
+        extraOffers = extraOffers.filter((extraOffer) => extraOffer.name !== offer.title);
+      }
+
+      return extraOffers;
     }
 
-    return extraOffers;
+    return [];
   }
 
   get _extraTripPointOffers() {
@@ -201,9 +225,13 @@ class TripPointEdit extends Component {
       'taxi': ``,
       'bus': ``,
       'train': ``,
+      'ship': ``,
+      'transport': ``,
+      'drive': ``,
       'flight': ``,
       'check-in': ``,
       'sightseeing': ``,
+      'restaurant': ``
     };
     checkedTripTypes[this._type] = `checked`;
 
@@ -239,6 +267,18 @@ class TripPointEdit extends Component {
                     ${this._checkedTripTypes.train}>
                   <label class="travel-way__select-label" for="travel-way-train${this._id}">🚂 train</label>
 
+                  <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-ship${this._id}" name="travelway" value="ship"
+                    ${this._checkedTripTypes.ship}>
+                  <label class="travel-way__select-label" for="travel-way-ship${this._id}">🛳️ ship</label>
+
+                  <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-transport${this._id}" name="travelway" value="transport"
+                    ${this._checkedTripTypes.transport}>
+                  <label class="travel-way__select-label" for="travel-way-transport${this._id}">🚊️ transport</label>
+
+                  <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-drive${this._id}" name="travelway" value="drive"
+                    ${this._checkedTripTypes.drive}>
+                  <label class="travel-way__select-label" for="travel-way-drive${this._id}">🚗️ drive</label>
+
                   <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight${this._id}" name="travelway" value="flight"
                     ${this._checkedTripTypes.flight}>
                   <label class="travel-way__select-label" for="travel-way-flight${this._id}">✈️ flight</label>
@@ -252,6 +292,10 @@ class TripPointEdit extends Component {
                   <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing${this._id}" name="travelway" value="sightseeing"
                     ${this._checkedTripTypes.sightseeing}>
                   <label class="travel-way__select-label" for="travel-way-sightseeing${this._id}">🏛 sightseeing</label>
+
+                  <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-restaurant${this._id}" name="travelway" value="restaurant"
+                    ${this._checkedTripTypes.restaurant}>
+                  <label class="travel-way__select-label" for="travel-way-restaurant${this._id}">🍴 restaurant</label>
                 </div>
               </div>
             </div>
@@ -328,6 +372,7 @@ class TripPointEdit extends Component {
       start: new Date(),
       end: new Date(),
       price: 0,
+      totalPrice: 0,
       isFavorite: false,
       city: this._city,
       description: this._description,
@@ -366,6 +411,12 @@ class TripPointEdit extends Component {
     }
   }
 
+  _onDocumentKeydown(evt) {
+    if (evt.keyCode === ESC_KEYCODE && typeof this._onEscape === `function`) {
+      this._onEscape();
+    }
+  }
+
   _onTripTypeClick(evt) {
     const tripType = evt.target.value;
     if (tripType) {
@@ -401,6 +452,7 @@ class TripPointEdit extends Component {
 
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteButtonClick);
+    document.addEventListener(`keydown`, this._onDocumentKeydown);
     this._element.querySelector(`.travel-way__select`).addEventListener(`click`, this._onTripTypeClick);
     this._element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onDestinationChange);
   }
@@ -408,6 +460,7 @@ class TripPointEdit extends Component {
   _unbind() {
     this._element.querySelector(`form`).removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`form`).removeEventListener(`reset`, this._onDeleteButtonClick);
+    document.removeEventListener(`keydown`, this._onDocumentKeydown);
     this._element.querySelector(`.travel-way__select`).removeEventListener(`click`, this._onTripTypeClick);
     this._element.querySelector(`.point__destination-input`).removeEventListener(`change`, this._onDestinationChange);
   }
