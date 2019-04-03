@@ -24,6 +24,7 @@ const statsContainer = document.querySelector(`#stats`);
 const tableButton = document.querySelector(`.view-switch__item:nth-child(1)`);
 const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
 const newEventButton = document.querySelector(`.trip-controls__new-event`);
+const tripCost = document.querySelector(`.trip__total-cost`);
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
 
@@ -106,8 +107,8 @@ const renderTripPoint = (data, destinationsData, offersData, container, isNew = 
 
     api.updateTripPoint(id, data.toRaw())
       .then((newTripPoint) => {
-        tripPointEdit.unblockTripPointOnSave();
         tripPoint.updateData(newTripPoint);
+        tripPointEdit.unblockTripPointOnSave();
         tripPointsInfoPromise = api.getTripPoints();
 
         Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
@@ -133,6 +134,15 @@ const renderTripPoint = (data, destinationsData, offersData, container, isNew = 
   };
 };
 
+const getTripCost = () => {
+  const tripPointsTotalPrices = [...document.querySelectorAll(`.point__total-price`)];
+  const tripCost = tripPointsTotalPrices.reduce((accumulator, currentValue) => {
+    return accumulator + parseInt(currentValue.value, 10);
+  }, 0);
+
+  return `€ ` + tripCost;
+};
+
 const renderTripDays = (data, destinationsData, offersData) => {
   tripDaysContainer.innerHTML = ``;
   const tripDaysInfo = new Map();
@@ -153,6 +163,8 @@ const renderTripDays = (data, destinationsData, offersData) => {
       renderTripPoint(tripPointData, destinationsData, offersData, tripDayPointsContainer);
     }
   }
+
+  tripCost.innerText = getTripCost(data);
 };
 
 const getMoneyCountInfo = (data) => {

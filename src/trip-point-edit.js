@@ -300,7 +300,6 @@ class TripPointEdit extends Component {
                 ${this._tripPointPictures}
               </div>
             </section>
-            <input type="hidden" class="point__total-price" name="total-price" value="">
           </section>
         </form>
       </article>
@@ -323,7 +322,6 @@ class TripPointEdit extends Component {
       start: new Date(),
       end: new Date(),
       price: 0,
-      totalPrice: 0,
       isFavorite: false,
       city: this._city,
       description: this._description,

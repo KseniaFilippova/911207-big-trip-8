@@ -49,6 +49,14 @@ class TripPoint extends Component {
     return this._offers.filter((offer) => offer.accepted).map(this._createTripPointOffer).join(``);
   }
 
+  get _totalPrice() {
+    const offersPrice = this._offers.filter((offer) => offer.accepted).reduce((accumulator, currentValue) => {
+      return accumulator + parseInt(currentValue.price, 10);
+    }, 0);
+
+    return offersPrice + this._price;
+  }
+
   get _template() {
     return `
       <article class = "trip-point">
@@ -62,6 +70,7 @@ class TripPoint extends Component {
         <ul class="trip-point__offers">
           ${this._tripOffers}
         </ul>
+        <input type="hidden" class="point__total-price" name="total-price" value="${this._totalPrice}">
       </article>
     `.trim();
   }

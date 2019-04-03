@@ -28,14 +28,11 @@ const createMapper = (target) => {
     },
     price: (value) => {
       target.price = parseInt(value, 10);
-      target.totalPrice = parseInt(value, 10);
     },
     offer: (value) => {
       const offerInfoArr = value.split(`_`);
       const [offerTitle, offerPrice] = offerInfoArr;
       target.offers.push({title: offerTitle, price: offerPrice, accepted: true});
-
-      target.totalPrice += parseInt(offerPrice, 10);
     },
     totalPrice: (value) => {
       target.totalPrice = parseInt(value, 10);
