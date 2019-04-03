@@ -1,63 +1,14 @@
 import {Component} from './component';
 import {tripTypesData} from './trip-types-data';
+import {createMapper} from './create-mapper';
 
 import flatpickr from 'flatpickr';
 import moment from 'moment';
 
 const ESC_KEYCODE = 27;
 
-const createMapper = (target) => {
-  return {
-    travelway: (value) => {
-      target.type = value;
-    },
-    destination: (value) => {
-      target.city = value;
-    },
-    day: (value) => {
-      const date = moment(value, [`MMM D`]);
-      target.start.setDate(date.date());
-      target.start.setMonth(date.month());
-
-      target.end.setDate(date.date());
-      target.end.setMonth(date.month());
-    },
-    startTime: (value) => {
-      const startTime = moment(value, [`HH:mm`]);
-      target.start.setHours(startTime.hours());
-      target.start.setMinutes(startTime.minutes());
-    },
-    endTime: (value) => {
-      const endTime = moment(value, [`HH:mm`]);
-      target.end.setHours(endTime.hours());
-      target.end.setMinutes(endTime.minutes());
-    },
-    price: (value) => {
-      target.price = parseInt(value, 10);
-      target.totalPrice = parseInt(value, 10);
-    },
-    offer: (value) => {
-      const offerInfoArr = value.split(`_`);
-      const [offerTitle, offerPrice] = offerInfoArr;
-      target.offers.push({title: offerTitle, price: offerPrice, accepted: true});
-
-      target.totalPrice += parseInt(offerPrice, 10);
-    },
-    totalPrice: (value) => {
-      target.totalPrice = parseInt(value, 10);
-    },
-    favorite: (value) => {
-      if (value === `on`) {
-        target.isFavorite = true;
-      } else {
-        target.isFavorite = false;
-      }
-    },
-  };
-};
-
 class TripPointEdit extends Component {
-  constructor(data, possibleDestinations, possibleOffers) {
+  constructor(data, possibleDestinations = [], possibleOffers = []) {
     super();
     this._id = data.id;
     this._type = data.type;
@@ -413,7 +364,7 @@ class TripPointEdit extends Component {
 
   _onDocumentKeydown(evt) {
     if (evt.keyCode === ESC_KEYCODE && typeof this._onEscape === `function`) {
-      this._onEscape();
+      this._onEscape(this._id);
     }
   }
 

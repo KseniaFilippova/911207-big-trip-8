@@ -35,11 +35,11 @@ const API = class {
       .then(toJSON);
   }
 
-  createTripPoint(tripPoint) {
+  createTripPoint(data) {
     return this._load({
       url: `points`,
       method: `POST`,
-      body: JSON.stringify(tripPoint),
+      body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON)

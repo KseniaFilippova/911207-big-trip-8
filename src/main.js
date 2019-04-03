@@ -1,31 +1,36 @@
 import Chart from 'chart.js';
+import moment from 'moment';
 
 import {API} from './api';
 import {filtersData} from './filters-data';
 import {Filter} from './filter';
 import {tripTypesData} from './trip-types-data';
+import {newTripPointData} from './new-trip-point-data';
+import {TripDay} from './trip-day';
 import {TripPoint} from './trip-point';
 import {TripPointEdit} from './trip-point-edit';
 import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 
-const AUTHORIZATION = `Basic pi0w990or99080b`;
+const AUTHORIZATION = `Basic li0t9kor99080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
 const filtersContainer = document.querySelector(`.trip-filter`);
-const tripPointsContainer = document.querySelector(`.trip-day__items`);
+const tripDaysContainer = document.querySelector(`.trip-points`);
 const emptyTripPointsContainer = document.querySelector(`.trip__no-points`);
 const tableContainer = document.querySelector(`#table`);
 const statsContainer = document.querySelector(`#stats`);
 const tableButton = document.querySelector(`.view-switch__item:nth-child(1)`);
 const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
+const newEventButton = document.querySelector(`.trip-controls__new-event`);
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
 
+const possibleDestinationsPromise = api.getDestinations();
+const extraOffersPromise = api.getOffers();
+
 let tripPointsInfoPromise = api.getTripPoints();
-let possibleDestinationsPromise = api.getDestinations();
-let extraOffersPromise = api.getOffers();
 
 let moneyChart;
 let transportChart;
@@ -37,15 +42,15 @@ const renderFilteredTripPointsData = ([data, destinationsData, offersData]) => {
 
   switch (filterId) {
     case `filter-everything`:
-      renderTripPoints(data, destinationsData, offersData);
+      renderTripDays(data, destinationsData, offersData);
       break;
     case `filter-future`:
       const futureData = data.filter((it) => it.start > Date.now());
-      renderTripPoints(futureData, destinationsData, offersData);
+      renderTripDays(futureData, destinationsData, offersData);
       break;
     case `filter-past`:
       const pastData = data.filter((it) => it.end < Date.now());
-      renderTripPoints(pastData, destinationsData, offersData);
+      renderTripDays(pastData, destinationsData, offersData);
       break;
   }
 };
@@ -62,60 +67,91 @@ const renderFilters = (data) => {
   }
 };
 
-const renderTripPoints = (data, destinationsData, offersData) => {
-  tripPointsContainer.innerHTML = ``;
+const deleteTripPoint = (id, tripPointEdit) => {
+  tripPointEdit.blockTripPointOnDelete();
+
+  api.deleteTripPoint(id)
+    .then(() => {
+      tripPointsInfoPromise = api.getTripPoints();
+
+      Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
+        .then((values) => renderFilteredTripPointsData(values));
+    })
+    .catch(() => {
+      tripPointEdit.shake();
+      tripPointEdit.unblockTripPointOnDelete();
+    });
+};
+
+const renderTripPoint = (data, destinationsData, offersData, container, isNew = false) => {
+  const tripPoint = new TripPoint(data);
+  const tripPointEdit = new TripPointEdit(data, destinationsData, offersData);
+
+  if (isNew) {
+    tripPointEdit.element.style = `margin-top: 40px`;
+    container.insertBefore(tripPointEdit.element, tripDaysContainer.firstChild);
+  } else {
+    container.appendChild(tripPoint.element);
+  }
+
+  tripPoint.onClick = () => {
+    container.replaceChild(tripPointEdit.element, tripPoint.element);
+    tripPoint.destroy();
+  };
+
+  tripPointEdit.onSubmit = (id, newData) => {
+    Object.assign(data, newData);
+
+    tripPointEdit.blockTripPointOnSave();
+
+    api.updateTripPoint(id, data.toRaw())
+      .then((newTripPoint) => {
+        tripPointEdit.unblockTripPointOnSave();
+        tripPoint.updateData(newTripPoint);
+        tripPointsInfoPromise = api.getTripPoints();
+
+        Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
+          .then((values) => renderFilteredTripPointsData(values));
+      })
+      .catch(() => {
+        tripPointEdit.shake();
+        tripPointEdit.unblockTripPointOnSave();
+      });
+  };
+
+  tripPointEdit.onDelete = (id) => {
+    deleteTripPoint(id, tripPointEdit);
+  };
+
+  tripPointEdit.onEscape = (id) => {
+    if (isNew) {
+      deleteTripPoint(id, tripPointEdit);
+    } else {
+      container.replaceChild(tripPoint.element, tripPointEdit.element);
+      tripPointEdit.destroy();
+    }
+  };
+};
+
+const renderTripDays = (data, destinationsData, offersData) => {
+  tripDaysContainer.innerHTML = ``;
+  const tripDaysInfo = new Map();
 
   for (const tripPointData of data) {
-    const tripPoint = new TripPoint(tripPointData);
-    const tripPointEdit = new TripPointEdit(tripPointData, destinationsData, offersData);
+    const tripDayDate = moment(tripPointData.start).format(`MMM D`);
 
-    tripPointsContainer.appendChild(tripPoint.element);
+    if (!tripDaysInfo.has(tripDayDate)) {
+      const tripDay = new TripDay(tripDayDate);
+      const tripDayPointsContainer = tripDay.element.querySelector(`.trip-day__items`);
 
-    tripPoint.onClick = () => {
-      tripPointsContainer.replaceChild(tripPointEdit.element, tripPoint.element);
-      tripPoint.destroy();
-    };
-
-    tripPointEdit.onSubmit = (id, newData) => {
-      Object.assign(tripPointData, newData);
-
-      tripPointEdit.blockTripPointOnSave();
-
-      api.updateTripPoint(id, tripPointData.toRaw())
-        .then((newTripPoint) => {
-          tripPointEdit.unblockTripPointOnSave();
-          tripPoint.updateData(newTripPoint);
-          tripPointsContainer.replaceChild(tripPoint.element, tripPointEdit.element);
-          tripPointEdit.destroy();
-        })
-        .catch(() => {
-          tripPointEdit.shake();
-          tripPointEdit.unblockTripPointOnSave();
-        });
-    };
-
-    tripPointEdit.onDelete = (id) => {
-      tripPointEdit.blockTripPointOnDelete();
-
-      api.deleteTripPoint(id)
-        .then(() => {
-          tripPointsInfoPromise = api.getTripPoints();
-          possibleDestinationsPromise = api.getDestinations();
-          extraOffersPromise = api.getOffers();
-
-          Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
-            .then((values) => renderFilteredTripPointsData(values));
-        })
-        .catch(() => {
-          tripPointEdit.shake();
-          tripPointEdit.unblockTripPointOnDelete();
-        });
-    };
-
-    tripPointEdit.onEscape = () => {
-      tripPointsContainer.replaceChild(tripPoint.element, tripPointEdit.element);
-      tripPointEdit.destroy();
-    };
+      tripDaysContainer.appendChild(tripDay.element);
+      tripDaysInfo.set(tripDayDate, tripDay);
+      renderTripPoint(tripPointData, destinationsData, offersData, tripDayPointsContainer);
+    } else {
+      const tripDay = tripDaysInfo.get(tripDayDate);
+      const tripDayPointsContainer = tripDay.element.querySelector(`.trip-day__items`);
+      renderTripPoint(tripPointData, destinationsData, offersData, tripDayPointsContainer);
+    }
   }
 };
 
@@ -187,6 +223,14 @@ const onStatsButtonClick = (evt) => {
   }
 };
 
+const onNewEventButtonClick = () => {
+  api.createTripPoint(newTripPointData)
+    .then((rawData) => {
+      Promise.all([possibleDestinationsPromise, extraOffersPromise])
+        .then((values) => renderTripPoint(rawData, values[0], values[1], tripDaysContainer, true));
+    });
+};
+
 renderFilters(filtersData);
 
 Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
@@ -201,3 +245,4 @@ Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersProm
 
 tableButton.addEventListener(`click`, onTableButtonClick);
 statsButton.addEventListener(`click`, onStatsButtonClick);
+newEventButton.addEventListener(`click`, onNewEventButtonClick);
