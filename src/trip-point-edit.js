@@ -14,12 +14,12 @@ class TripPointEdit extends Component {
     this._type = data.type;
     this._start = data.start;
     this._end = data.end;
-    this._price = data.price;
     this._isFavorite = data.isFavorite;
     this._city = data.city;
     this._description = data.description;
     this._pictures = data.pictures;
     this._offers = data.offers;
+    this._basePrice = data.basePrice;
 
     this._possibleDestinations = possibleDestinations;
     this._possibleOffers = possibleOffers;
@@ -41,12 +41,12 @@ class TripPointEdit extends Component {
     this._type = data.type;
     this._start = data.start;
     this._end = data.end;
-    this._price = data.price;
     this._isFavorite = data.isFavorite;
     this._city = data.city;
     this._description = data.description;
     this._pictures = data.pictures;
     this._offers = data.offers;
+    this._basePrice = data.basePrice;
   }
 
   set onSubmit(fn) {
@@ -264,7 +264,7 @@ class TripPointEdit extends Component {
             <label class="point__price">
               write price
               <span class="point__price-currency">€</span>
-              <input class="point__input" type="text" value="${this._price}" name="price">
+              <input class="point__input" type="text" value="${this._basePrice}" name="price">
             </label>
 
             <div class="point__buttons">

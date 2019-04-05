@@ -4,6 +4,8 @@ import moment from 'moment';
 import {API} from './api';
 import {filtersData} from './filters-data';
 import {Filter} from './filter';
+import {sortsData} from './sorts-data';
+import {Sort} from './sort';
 import {tripTypesData} from './trip-types-data';
 import {newTripPointData} from './new-trip-point-data';
 import {TripDay} from './trip-day';
@@ -17,6 +19,7 @@ const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
 const filtersContainer = document.querySelector(`.trip-filter`);
+const sortsContainer = document.querySelector(`.trip-sorting`);
 const tripDaysContainer = document.querySelector(`.trip-points`);
 const emptyTripPointsContainer = document.querySelector(`.trip__no-points`);
 const tableContainer = document.querySelector(`#table`);
@@ -27,7 +30,6 @@ const newEventButton = document.querySelector(`.trip-controls__new-event`);
 const tripCostInput = document.querySelector(`.trip__total-cost`);
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
-
 const possibleDestinationsPromise = api.getDestinations();
 const extraOffersPromise = api.getOffers();
 
@@ -38,7 +40,7 @@ let transportChart;
 
 const getFilterId = () => document.querySelector(`input[name="filter"]:checked`).id;
 
-const renderFilteredTripPointsData = ([data, destinationsData, offersData]) => {
+const renderFilteredTripPoints = ([data, destinationsData, offersData]) => {
   const filterId = getFilterId();
 
   switch (filterId) {
@@ -52,7 +54,6 @@ const renderFilteredTripPointsData = ([data, destinationsData, offersData]) => {
     case `filter-past`:
       const pastData = data.filter((it) => it.end < Date.now());
       renderTripDays(pastData, destinationsData, offersData);
-      break;
   }
 };
 
@@ -63,10 +64,51 @@ const renderFilters = (data) => {
 
     filter.onFilter = () => {
       Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
-        .then((values) => renderFilteredTripPointsData(values));
+        .then((values) => renderFilteredTripPoints(values));
     };
   }
 };
+
+const getSortId = () => document.querySelector(`input[name="trip-sorting"]:checked`).id;
+const compareByTime = (a, b) => a.start - b.start;
+const compareByDuration = (a, b) => (b.end - b.start) - (a.end - a.start);
+const compareByPrice = (a, b) => b.totalPrice - a.totalPrice;
+
+const renderSortedTripPoints = ([data, destinationsData, offersData]) => {
+  const sortId = getSortId();
+
+  switch (sortId) {
+    case `sorting-event`:
+      tripPointsInfoPromise.then((data) => {
+        Promise.all([possibleDestinationsPromise, extraOffersPromise])
+          .then((values) => renderFilteredTripPoints([data.sort(compareByTime), values[0], values[1]]));
+      });
+      break;
+    case `sorting-time`:
+      tripPointsInfoPromise.then((data) => {
+        Promise.all([possibleDestinationsPromise, extraOffersPromise])
+          .then((values) => renderFilteredTripPoints([data.sort(compareByDuration), values[0], values[1]]));
+      });
+      break;
+    case `sorting-price`:
+      tripPointsInfoPromise.then((data) => {
+        Promise.all([possibleDestinationsPromise, extraOffersPromise])
+          .then((values) => renderFilteredTripPoints([data.sort(compareByPrice), values[0], values[1]]));
+      });
+  }
+}
+
+const renderSorts = (data) => {
+  for (const sortData of data) {
+    const sort = new Sort(sortData);
+    sortsContainer.appendChild(sort.element);
+
+    sort.onSort = () => {
+      Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
+        .then((values) => renderSortedTripPoints(values));
+    };
+  }
+}
 
 const deleteTripPoint = (id, tripPointEdit) => {
   tripPointEdit.blockTripPointOnDelete();
@@ -76,7 +118,7 @@ const deleteTripPoint = (id, tripPointEdit) => {
       tripPointsInfoPromise = api.getTripPoints();
 
       Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
-        .then((values) => renderFilteredTripPointsData(values));
+        .then((values) => renderFilteredTripPoints(values));
     })
     .catch(() => {
       tripPointEdit.shake();
@@ -112,7 +154,7 @@ const renderTripPoint = (data, destinationsData, offersData, container, isNew = 
         tripPointsInfoPromise = api.getTripPoints();
 
         Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
-          .then((values) => renderFilteredTripPointsData(values));
+          .then((values) => renderFilteredTripPoints(values));
       })
       .catch(() => {
         tripPointEdit.shake();
@@ -244,11 +286,12 @@ const onNewEventButtonClick = () => {
 };
 
 renderFilters(filtersData);
+renderSorts(sortsData);
 
 Promise.all([tripPointsInfoPromise, possibleDestinationsPromise, extraOffersPromise])
   .then((values) => {
     emptyTripPointsContainer.innerText = `Loading route...`;
-    renderFilteredTripPointsData(values);
+    renderFilteredTripPoints(values);
     emptyTripPointsContainer.classList.add(`visually-hidden`);
   })
   .catch(() => {

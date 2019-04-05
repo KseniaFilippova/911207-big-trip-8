@@ -34,9 +34,10 @@ class TripPoint extends Component {
     this._type = data.type;
     this._start = data.start;
     this._end = data.end;
-    this._price = data.price;
     this._city = data.city;
     this._offers = data.offers;
+    this._basePrice = data.basePrice;
+    this._totalPrice = data.totalPrice;
 
     this._onClick = null;
     this._onTripPointClick = this._onTripPointClick.bind(this);
@@ -46,9 +47,10 @@ class TripPoint extends Component {
     this._type = data.type;
     this._start = data.start;
     this._end = data.end;
-    this._price = data.price;
     this._city = data.city;
     this._offers = data.offers;
+    this._basePrice = data.basePrice;
+    this._totalPrice = data.totalPrice;
   }
 
   set onClick(fn) {
@@ -65,14 +67,6 @@ class TripPoint extends Component {
 
   get _tripOffers() {
     return this._offers.filter((offer) => offer.accepted).map(this._createTripPointOffer).splice(0, 3).join(``);
-  }
-
-  get _totalPrice() {
-    const offersPrice = this._offers.filter((offer) => offer.accepted).reduce((accumulator, currentValue) => {
-      return accumulator + parseInt(currentValue.price, 10);
-    }, 0);
-
-    return offersPrice + this._price;
   }
 
   get _template() {

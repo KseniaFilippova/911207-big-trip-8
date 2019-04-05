@@ -194,7 +194,7 @@ input[type=radio]:checked + .trip-filter__item {
 
 .trip-sorting input[type=radio] {
   position: absolute;
-  left: -900em;
+  left: -700em;
 }
 
 .trip-sorting__item {
@@ -225,7 +225,7 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 
 .trip-sorting__item--time {
-  margin-right: 120px;
+  margin-right: 110px;
 }
 
 .trip-sorting__item--price {
@@ -320,6 +320,7 @@ input[type=radio]:checked + .trip-sorting__item {
   flex-basis: 178px;
   flex-shrink: 0;
   flex-grow: 0;
+  align-self: center;
   margin: 0;
   padding: 0;
 }
@@ -334,7 +335,7 @@ input[type=radio]:checked + .trip-sorting__item {
 
 .trip-point__price {
   flex-basis: 112px;
-  margin: 0;
+  margin: 0 0 5px;
   padding: 0;
   align-self: center;
 }
@@ -343,6 +344,7 @@ input[type=radio]:checked + .trip-sorting__item {
   list-style: none;
   margin: 0;
   padding: 0;
+  align-self: center;
 }
 
 .trip-point__offer {

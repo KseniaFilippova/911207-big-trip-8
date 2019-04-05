@@ -4,7 +4,7 @@ class Filter extends Component {
   constructor(data) {
     super();
     this._name = data.name;
-    this._id = data.name.toLowerCase();
+    this._lowerCaseName = data.name.toLowerCase();
     this._isChecked = data.isChecked;
 
     this._onFilterClick = this._onFilterClick.bind(this);
@@ -18,8 +18,8 @@ class Filter extends Component {
   get _template() {
     return `
       <span>
-        <input type="radio" id="filter-${this._id}" name="filter" value="${this._id}" ${this._isChecked ? `checked` : ``}>
-        <label class="trip-filter__item" for="filter-${this._id}">${this._name}</label>
+        <input type="radio" id="filter-${this._lowerCaseName}" name="filter" value="${this._lowerCaseName}" ${this._isChecked ? `checked` : ``}>
+        <label class="trip-filter__item" for="filter-${this._lowerCaseName}">${this._name}</label>
       </span>
     `.trim();
   }
