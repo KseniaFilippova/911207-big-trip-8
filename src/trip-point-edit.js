@@ -194,10 +194,6 @@ class TripPointEdit extends Component {
       <article class="point">
         <form action="" method="get">
           <header class="point__header">
-            <label class="point__date">
-              choose day
-              <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${moment(this._start).format(`MMM D`)}">
-            </label>
 
             <div class="travel-way">
               <label class="travel-way__label" for="travel-way__toggle${this._id}">${tripTypesData[this._type].icon}</label>
@@ -301,6 +297,7 @@ class TripPointEdit extends Component {
               </div>
             </section>
           </section>
+          <input type="hidden" class="point__total-price" name="total-price" value="${this._totalPrice}">
         </form>
       </article>
     `.trim();
@@ -395,9 +392,10 @@ class TripPointEdit extends Component {
   }
 
   _bind() {
-    flatpickr(this.element.querySelector(`input[name="day"]`), {altInput: true, altFormat: `M j`, dateFormat: `M-j`});
-    flatpickr(this.element.querySelector(`input[name="startTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});// eslint-disable-line camelcase
-    flatpickr(this.element.querySelector(`input[name="endTime"]`), {enableTime: true, noCalendar: true, dateFormat: `H:i`, time_24hr: true});// eslint-disable-line camelcase
+    flatpickr(this.element.querySelector(`input[name="startTime"]`), {altInput: true, altFormat: `H:i`, enableTime: true,
+      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._start).format(`YYYY-MM-DD HH:mm`)});
+    flatpickr(this.element.querySelector(`input[name="endTime"]`), {altInput: true, altFormat: `H:i`, enableTime: true,
+      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._end).format(`YYYY-MM-DD HH:mm`)});
 
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteButtonClick);

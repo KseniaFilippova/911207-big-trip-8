@@ -8,23 +8,19 @@ const createMapper = (target) => {
     destination: (value) => {
       target.city = value;
     },
-    day: (value) => {
-      const date = moment(value, [`MMM D`]);
-      target.start.setMonth(date.month());
-      target.start.setDate(date.date());
-
-      target.end.setMonth(date.month());
-      target.end.setDate(date.date());
-    },
     startTime: (value) => {
-      const startTime = moment(value, [`HH:mm`]);
-      target.start.setHours(startTime.hours());
-      target.start.setMinutes(startTime.minutes());
+      const startDate = moment(value, [`YYYY-MM-DD HH:mm`]);
+      target.start.setMonth(startDate.month());
+      target.start.setDate(startDate.date());
+      target.start.setHours(startDate.hours());
+      target.start.setMinutes(startDate.minutes());
     },
     endTime: (value) => {
-      const endTime = moment(value, [`HH:mm`]);
-      target.end.setHours(endTime.hours());
-      target.end.setMinutes(endTime.minutes());
+      const endDate = moment(value, [`YYYY-MM-DD HH:mm`]);
+      target.end.setMonth(endDate.month());
+      target.end.setDate(endDate.date());
+      target.end.setHours(endDate.hours());
+      target.end.setMinutes(endDate.minutes());
     },
     price: (value) => {
       target.price = parseInt(value, 10);

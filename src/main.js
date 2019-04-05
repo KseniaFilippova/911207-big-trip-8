@@ -12,7 +12,7 @@ import {TripPointEdit} from './trip-point-edit';
 import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 
-const AUTHORIZATION = `Basic li0t9kor99080aa`;
+const AUTHORIZATION = `Basic li0t9kor9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
@@ -24,7 +24,7 @@ const statsContainer = document.querySelector(`#stats`);
 const tableButton = document.querySelector(`.view-switch__item:nth-child(1)`);
 const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
 const newEventButton = document.querySelector(`.trip-controls__new-event`);
-const tripCost = document.querySelector(`.trip__total-cost`);
+const tripCostInput = document.querySelector(`.trip__total-cost`);
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
 
@@ -85,7 +85,7 @@ const deleteTripPoint = (id, tripPointEdit) => {
 };
 
 const renderTripPoint = (data, destinationsData, offersData, container, isNew = false) => {
-  const tripPoint = new TripPoint(data);
+  const tripPoint = new TripPoint(data, offersData);
   const tripPointEdit = new TripPointEdit(data, destinationsData, offersData);
 
   if (isNew) {
@@ -135,9 +135,9 @@ const renderTripPoint = (data, destinationsData, offersData, container, isNew = 
 };
 
 const getTripCost = () => {
-  const tripPointsTotalPrices = [...document.querySelectorAll(`.point__total-price`)];
-  const tripCost = tripPointsTotalPrices.reduce((accumulator, currentValue) => {
-    return accumulator + parseInt(currentValue.value, 10);
+  const tripPointsTotalPrices = document.querySelectorAll(`.trip-point__price span`);
+  const tripCost = [...tripPointsTotalPrices].reduce((accumulator, currentValue) => {
+    return accumulator + parseInt(currentValue.innerText, 10);
   }, 0);
 
   return `€ ` + tripCost;
@@ -164,7 +164,7 @@ const renderTripDays = (data, destinationsData, offersData) => {
     }
   }
 
-  tripCost.innerText = getTripCost(data);
+  tripCostInput.innerText = getTripCost(data);
 };
 
 const getMoneyCountInfo = (data) => {

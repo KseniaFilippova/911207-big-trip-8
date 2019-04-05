@@ -3,10 +3,28 @@ import {tripTypesData} from './trip-types-data';
 
 import moment from 'moment';
 
-const getDuration = (startDate, endDate) => {
-  const diff = moment(endDate).diff(moment(startDate));
+const ONE_HOUR_MILISECONDS = 3600000;
+const ONE_DAY_MILISECONDS = 86400000;
 
-  return moment.utc(diff).format(`H[H] m[M]`);
+const formatLeadingZero = (number) => {
+  if (number < 10) {
+    return `0` + number;
+  }
+
+  return number;
+};
+
+const getFormattedDuration = (startDateMs, endDateMs) => {
+  const diff = endDateMs - startDateMs;
+  const duration = moment.duration(diff);
+
+  if (diff < ONE_HOUR_MILISECONDS) {
+    return `${formatLeadingZero(duration.minutes())}M`;
+  } else if (diff < ONE_DAY_MILISECONDS) {
+    return `${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
+  } else {
+    return `${formatLeadingZero(duration.days())}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
+  }
 };
 
 class TripPoint extends Component {
@@ -40,13 +58,13 @@ class TripPoint extends Component {
   _createTripPointOffer(offerInfo) {
     return `
       <li>
-        <button class="trip-point__offer">${offerInfo.title} + €${offerInfo.price}</button>
+        <button class="trip-point__offer">${offerInfo.title} €${offerInfo.price}</button>
       </li>
     `;
   }
 
   get _tripOffers() {
-    return this._offers.filter((offer) => offer.accepted).map(this._createTripPointOffer).join(``);
+    return this._offers.filter((offer) => offer.accepted).map(this._createTripPointOffer).splice(0, 3).join(``);
   }
 
   get _totalPrice() {
@@ -64,13 +82,14 @@ class TripPoint extends Component {
         <h3 class="trip-point__title">${tripTypesData[this._type].action} ${this._city}</h3>
         <p class="trip-point__schedule">
           <span class="trip-point__timetable">${moment(this._start).format(`HH:mm`)}&nbsp;— ${moment(this._end).format(`HH:mm`)}</span>
-          <span class="trip-point__duration">${getDuration(this._start, this._end)}</span>
+          <span class="trip-point__duration">${getFormattedDuration(this._start, this._end)}</span>
         </p>
-        <p class="trip-point__price">€&nbsp;${this._price}</p>
+        <p class="trip-point__price">€&nbsp;
+          <span>${this._totalPrice}</span>
+        </p>
         <ul class="trip-point__offers">
           ${this._tripOffers}
         </ul>
-        <input type="hidden" class="point__total-price" name="total-price" value="${this._totalPrice}">
       </article>
     `.trim();
   }
