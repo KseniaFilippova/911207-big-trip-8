@@ -318,7 +318,7 @@ class TripPointEdit extends Component {
       type: ``,
       start: new Date(),
       end: new Date(),
-      price: 0,
+      basePrice: 0,
       isFavorite: false,
       city: this._city,
       description: this._description,
@@ -393,9 +393,9 @@ class TripPointEdit extends Component {
 
   _bind() {
     flatpickr(this.element.querySelector(`input[name="startTime"]`), {altInput: true, altFormat: `H:i`, enableTime: true,
-      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._start).format(`YYYY-MM-DD HH:mm`)});
+      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._start).format(`YYYY-MM-DD HH:mm`)});// eslint-disable-line camelcase
     flatpickr(this.element.querySelector(`input[name="endTime"]`), {altInput: true, altFormat: `H:i`, enableTime: true,
-      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._end).format(`YYYY-MM-DD HH:mm`)});
+      dateFormat: `Y-m-d H:i`, time_24hr: true, defaultDate: moment(this._end).format(`YYYY-MM-DD HH:mm`)});// eslint-disable-line camelcase
 
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteButtonClick);
