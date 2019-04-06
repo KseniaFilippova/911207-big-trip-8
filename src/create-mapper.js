@@ -23,7 +23,13 @@ const createMapper = (target) => {
       target.end.setMinutes(endDate.minutes());
     },
     price: (value) => {
-      target.basePrice = parseInt(value, 10);
+      const price = parseInt(value, 10);
+
+      if (price) {
+        target.basePrice = price;
+      } else {
+        target.basePrice = 0;
+      }
     },
     offer: (value) => {
       const offerInfoArr = value.split(`_`);
