@@ -19,7 +19,6 @@ const AUTHORIZATION = `Basic li0t9kor9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
-const tripInfo = document.querySelector(`.trip`);
 const filtersContainer = document.querySelector(`.trip-filter`);
 const sortsContainer = document.querySelector(`.trip-sorting`);
 const totalCostContainer = document.querySelector(`.trip__total`);
@@ -40,27 +39,32 @@ let tripPointsDataPromise = api.getTripPoints();
 let moneyChart;
 let transportChart;
 
+const getFilterId = () => document.querySelector(`input[name="filter"]:checked`).id;
 const getSortId = () => document.querySelector(`input[name="trip-sorting"]:checked`).id;
-const compareByTime = (a, b) => a.start - b.start;
+const compareByEvent = (a, b) => a.start - b.start;
 const compareByDuration = (a, b) => (b.end - b.start) - (a.end - a.start);
 const compareByPrice = (a, b) => b.totalPrice - a.totalPrice;
 
-const sortTripPointsData = (tripPointsData) => {
-  const sortId = getSortId();
+const getSortedTripPointsData = (tripPointsData, sortId) => {
+  const result = tripPointsData.slice();
 
   switch (sortId) {
     case `sorting-event`:
-      return tripPointsData.sort(compareByTime);
+      return result.sort(compareByEvent);
     case `sorting-time`:
-      return tripPointsData.sort(compareByDuration);
+      return result.sort(compareByDuration);
     case `sorting-price`:
-      return tripPointsData.sort(compareByPrice);
+      return result.sort(compareByPrice);
+    default:
+      throw new Error(`Unknown sort id: ${sortId}`);
   }
 };
 
 const renderFilteredTripPoints = ([tripPointsData, destinationsData, offersData]) => {
-  const sortedTripPointsData = sortTripPointsData(tripPointsData);
   const filterId = getFilterId();
+  const sortId = getSortId();
+
+  const sortedTripPointsData = getSortedTripPointsData(tripPointsData, sortId);
 
   switch (filterId) {
     case `filter-everything`:
@@ -87,8 +91,6 @@ const renderSorts = (data) => {
     };
   }
 };
-
-const getFilterId = () => document.querySelector(`input[name="filter"]:checked`).id;
 
 const renderFilters = (data) => {
   for (const filterData of data) {
@@ -176,23 +178,25 @@ const renderTripPoint = (tripPointData, destinationsData, offersData, container,
 
 const renderTripDays = (tripPointsData, destinationsData, offersData) => {
   tripDaysContainer.innerHTML = ``;
-  const tripDaysInfo = new Map();
+
+  let previousTripDayDate;
 
   for (const tripPointData of tripPointsData) {
     const tripDayDate = moment(tripPointData.start).format(`MMM D`);
 
-    if (!tripDaysInfo.has(tripDayDate)) {
+    if (tripDayDate !== previousTripDayDate) {
       const tripDay = new TripDay(tripDayDate);
       const tripDayPointsContainer = tripDay.element.querySelector(`.trip-day__items`);
 
       tripDaysContainer.appendChild(tripDay.element);
-      tripDaysInfo.set(tripDayDate, tripDay);
       renderTripPoint(tripPointData, destinationsData, offersData, tripDayPointsContainer);
     } else {
-      const tripDay = tripDaysInfo.get(tripDayDate);
-      const tripDayPointsContainer = tripDay.element.querySelector(`.trip-day__items`);
+      const tripDayElement = tripDaysContainer.lastChild;
+      const tripDayPointsContainer = tripDayElement.querySelector(`.trip-day__items`);
       renderTripPoint(tripPointData, destinationsData, offersData, tripDayPointsContainer);
     }
+
+    previousTripDayDate = tripDayDate;
   }
 
   renderTotalCost(tripPointsData);
