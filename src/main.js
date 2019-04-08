@@ -14,6 +14,7 @@ import {TripPoint} from './trip-point';
 import {TripPointEdit} from './trip-point-edit';
 import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
+import {createTimeChartInfo} from './create-time-chart-info';
 
 const AUTHORIZATION = `Basic li0t9kor9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
@@ -26,11 +27,15 @@ const tripDaysContainer = document.querySelector(`.trip-points`);
 const emptyTripPointsContainer = document.querySelector(`.trip__no-points`);
 const tableContainer = document.querySelector(`#table`);
 const statsContainer = document.querySelector(`#stats`);
+
 const tableButton = document.querySelector(`.view-switch__item:nth-child(1)`);
 const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
 const newEventButton = document.querySelector(`.trip-controls__new-event`);
+
 const moneyStatCanvas = document.querySelector(`.statistic__money`);
 const transportStatCanvas = document.querySelector(`.statistic__transport`);
+const timeStatCanvas = document.querySelector(`.statistic__time-spend`);
+
 const possibleDestinationsPromise = api.getDestinations();
 const extraOffersPromise = api.getOffers();
 
@@ -38,6 +43,7 @@ let tripPointsDataPromise = api.getTripPoints();
 
 let moneyChart;
 let transportChart;
+let timeChart;
 
 const getFilterId = () => document.querySelector(`input[name="filter"]:checked`).id;
 const getSortId = () => document.querySelector(`input[name="trip-sorting"]:checked`).id;
@@ -209,9 +215,9 @@ const getMoneyCountInfo = (data) => {
     const tripType = tripTypesData[tripPointData.type].icon + ` ` + tripPointData.type.toUpperCase();
 
     if (moneyCountInfo[tripType]) {
-      moneyCountInfo[tripType] += tripPointData.price;
+      moneyCountInfo[tripType] += tripPointData.totalPrice;
     } else {
-      moneyCountInfo[tripType] = tripPointData.price;
+      moneyCountInfo[tripType] = tripPointData.totalPrice;
     }
   }
 
@@ -234,6 +240,22 @@ const getTransportCountInfo = (data) => {
   return transportCountInfo;
 };
 
+const getTimeCountInfo = (data) => {
+  const timeCountInfo = {};
+
+  for (const tripPointData of data) {
+    const tripType = tripTypesData[tripPointData.type].icon + ` ` + tripPointData.type.toUpperCase();
+
+    if (timeCountInfo[tripType]) {
+      timeCountInfo[tripType] += (tripPointData.end - tripPointData.start);
+    } else {
+      timeCountInfo[tripType] = (tripPointData.end - tripPointData.start);
+    }
+  }
+
+  return timeCountInfo;
+};
+
 const renderStats = (data) => {
   const moneyCountInfo = getMoneyCountInfo(data);
   const moneyChartInfo = createMoneyChartInfo(moneyCountInfo);
@@ -248,6 +270,13 @@ const renderStats = (data) => {
     transportChart.destroy();
   }
   transportChart = new Chart(transportStatCanvas, transportChartInfo);
+
+  const timeCountInfo = getTimeCountInfo(data);
+  const timeChartInfo = createTimeChartInfo(timeCountInfo);
+  if (timeChart) {
+    timeChart.destroy();
+  }
+  timeChart = new Chart(timeStatCanvas, timeChartInfo);
 };
 
 const onTableButtonClick = (evt) => {
