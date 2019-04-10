@@ -366,7 +366,10 @@ class TripPointEdit extends Component {
   _onTripTypeClick(evt) {
     const tripType = evt.target.value;
     if (tripType) {
-      this._type = tripType;
+      const formData = new FormData(this._element.querySelector(`form`));
+      const newData = this._processForm(formData);
+      this.updateData(newData);
+
       this._offers = [];
       this._updateElement();
     }

@@ -2,11 +2,12 @@ import Chart from 'chart.js';
 import moment from 'moment';
 
 import {API} from './api';
+import {Schedule} from './schedule';
+import {TotalCost} from './total-cost';
 import {filtersData} from './filters-data';
 import {Filter} from './filter';
 import {sortsData} from './sorts-data';
 import {Sort} from './sort';
-import {TotalCost} from './total-cost';
 import {tripTypesData} from './trip-types-data';
 import {newTripPointData} from './new-trip-point-data';
 import {TripDay} from './trip-day';
@@ -16,13 +17,14 @@ import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 import {createTimeChartInfo} from './create-time-chart-info';
 
-const AUTHORIZATION = `Basic li0t9kor9080aa`;
+const AUTHORIZATION = `Basic li0t9kjr9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
+const tripScheduleContainer = document.querySelector(`.trip__schedule`);
+const totalCostContainer = document.querySelector(`.trip__total`);
 const filtersContainer = document.querySelector(`.trip-filter`);
 const sortsContainer = document.querySelector(`.trip-sorting`);
-const totalCostContainer = document.querySelector(`.trip__total`);
 const tripDaysContainer = document.querySelector(`.trip-points`);
 const emptyTripPointsContainer = document.querySelector(`.trip__no-points`);
 const tableContainer = document.querySelector(`#table`);
@@ -110,12 +112,6 @@ const renderFilters = (data) => {
   }
 };
 
-const renderTotalCost = (tripPointsData) => {
-  totalCostContainer.innerHTML = ``;
-  const totalCost = new TotalCost(tripPointsData);
-  totalCostContainer.appendChild(totalCost.element);
-};
-
 const deleteTripPoint = (id, tripPointEdit) => {
   tripPointEdit.blockTripPointOnDelete();
 
@@ -182,8 +178,23 @@ const renderTripPoint = (tripPointData, destinationsData, offersData, container,
   };
 };
 
+const renderSchedule = (tripPointsData) => {
+  tripScheduleContainer.innerHTML = ``;
+  const schedule = new Schedule(tripPointsData);
+  tripScheduleContainer.appendChild(schedule.element);
+};
+
+const renderTotalCost = (tripPointsData) => {
+  totalCostContainer.innerHTML = ``;
+  const totalCost = new TotalCost(tripPointsData);
+  totalCostContainer.appendChild(totalCost.element);
+};
+
 const renderTripDays = (tripPointsData, destinationsData, offersData) => {
   tripDaysContainer.innerHTML = ``;
+
+  renderSchedule(tripPointsData);
+  renderTotalCost(tripPointsData);
 
   let previousTripDayDate;
 
@@ -204,8 +215,6 @@ const renderTripDays = (tripPointsData, destinationsData, offersData) => {
 
     previousTripDayDate = tripDayDate;
   }
-
-  renderTotalCost(tripPointsData);
 };
 
 const getMoneyCountInfo = (data) => {
@@ -285,6 +294,9 @@ const onTableButtonClick = (evt) => {
   if (!statsContainer.classList.contains(`visually-hidden`)) {
     statsContainer.classList.add(`visually-hidden`);
     tableContainer.classList.remove(`visually-hidden`);
+
+    tableButton.classList.add(`view-switch__item--active`);
+    statsButton.classList.remove(`view-switch__item--active`);
   }
 };
 
@@ -296,6 +308,9 @@ const onStatsButtonClick = (evt) => {
 
     tableContainer.classList.add(`visually-hidden`);
     statsContainer.classList.remove(`visually-hidden`);
+
+    statsButton.classList.add(`view-switch__item--active`);
+    tableButton.classList.remove(`view-switch__item--active`);
   }
 };
 
