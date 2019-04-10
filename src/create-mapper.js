@@ -10,6 +10,7 @@ const createMapper = (target) => {
     },
     startTime: (value) => {
       const startDate = moment(value, [`YYYY-MM-DD HH:mm`]);
+      target.start.setYear(startDate.year());
       target.start.setMonth(startDate.month());
       target.start.setDate(startDate.date());
       target.start.setHours(startDate.hours());
@@ -17,6 +18,7 @@ const createMapper = (target) => {
     },
     endTime: (value) => {
       const endDate = moment(value, [`YYYY-MM-DD HH:mm`]);
+      target.end.setYear(endDate.year());
       target.end.setMonth(endDate.month());
       target.end.setDate(endDate.date());
       target.end.setHours(endDate.hours());

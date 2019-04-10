@@ -8,7 +8,7 @@ const ONE_DAY_MILISECONDS = 86400000;
 
 const formatLeadingZero = (number) => {
   if (number < 10) {
-    return `0` + number;
+    return `0${number}`;
   }
 
   return number;
@@ -22,9 +22,9 @@ const getFormattedDuration = (startDateMs, endDateMs) => {
     return `${formatLeadingZero(duration.minutes())}M`;
   } else if (diff < ONE_DAY_MILISECONDS) {
     return `${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
-  } else {
-    return `${formatLeadingZero(duration.days())}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
   }
+
+  return `${formatLeadingZero(duration.days())}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
 };
 
 class TripPoint extends Component {

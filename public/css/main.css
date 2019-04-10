@@ -90,6 +90,7 @@ a:hover {
   height: 42px;
   line-height: calc(42px - 4px);
   text-align: center;
+  vertical-align: middle;
   width: 42px;
   margin-right: 17px;
 }
@@ -293,7 +294,7 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 
 .trip-point {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   margin-bottom: 80px;
   position: relative;
@@ -353,14 +354,11 @@ input[type=radio]:checked + .trip-sorting__item {
   color: #199cfa;
   cursor: pointer;
   font-weight: 700;
+  text-align: left;
   margin: 0 0 5px;
   opacity: 0.7;
   padding: 0;
   transition: opacity 0.1s ease-out;
-}
-
-.trip-point__offer:hover {
-  opacity: 1;
 }
 
 .visually-hidden {

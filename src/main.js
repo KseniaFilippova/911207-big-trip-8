@@ -212,7 +212,7 @@ const getMoneyCountInfo = (data) => {
   const moneyCountInfo = {};
 
   for (const tripPointData of data) {
-    const tripType = tripTypesData[tripPointData.type].icon + ` ` + tripPointData.type.toUpperCase();
+    const tripType = `${tripTypesData[tripPointData.type].icon} ${tripPointData.type.toUpperCase()}`;
 
     if (moneyCountInfo[tripType]) {
       moneyCountInfo[tripType] += tripPointData.totalPrice;
@@ -228,7 +228,7 @@ const getTransportCountInfo = (data) => {
   const transportCountInfo = {};
 
   for (const tripPointData of data) {
-    const tripType = tripTypesData[tripPointData.type].icon + ` ` + tripPointData.type.toUpperCase();
+    const tripType = `${tripTypesData[tripPointData.type].icon} ${tripPointData.type.toUpperCase()}`;
 
     if (transportCountInfo[tripType]) {
       transportCountInfo[tripType]++;
@@ -244,7 +244,7 @@ const getTimeCountInfo = (data) => {
   const timeCountInfo = {};
 
   for (const tripPointData of data) {
-    const tripType = tripTypesData[tripPointData.type].icon + ` ` + tripPointData.type.toUpperCase();
+    const tripType = `${tripTypesData[tripPointData.type].icon} ${tripPointData.type.toUpperCase()}`;
 
     if (timeCountInfo[tripType]) {
       timeCountInfo[tripType] += (tripPointData.end - tripPointData.start);
