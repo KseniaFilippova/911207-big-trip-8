@@ -10,18 +10,22 @@ class Schedule extends Component {
   }
 
   get _tripPointsCities() {
-    const tripPointsCitiesArr = this._tripPointsInfo.sort(compareByEvent).map((tripPointInfo) => tripPointInfo.city);
+    const citiesArr = this._tripPointsInfo.sort(compareByEvent).map((tripPointInfo) => tripPointInfo.city);
 
-    if (tripPointsCitiesArr.length === 0) {
+    if (citiesArr.length === 0) {
       return `No trip points`;
-    } else if (tripPointsCitiesArr.length > 5) {
-      const tripPointsStartCities = tripPointsCitiesArr.slice(0, 2).join(` – `);
-      const tripPointsEndCities = tripPointsCitiesArr.slice(-2).join(` – `);
-
-      return `${tripPointsStartCities} – ... – ${tripPointsEndCities}`;
+    } else if (citiesArr.length === 1) {
+      return `${citiesArr[0]}`;
     }
 
-    return tripPointsCitiesArr.join(` – `);
+    const startCity = citiesArr[0];
+    const endCity = citiesArr[citiesArr.length - 1];
+
+    if (startCity === endCity) {
+      return startCity;
+    }
+
+    return `${startCity} – ${endCity}`;
   }
 
   get _tripPointsBorderDates() {
@@ -29,14 +33,14 @@ class Schedule extends Component {
       return ``;
     }
 
-    const tripPointsStartDate = moment(this._tripPointsInfo.sort(compareByEvent)[0].start).format(`MMM D`);
-    const tripPointsEndDate = moment(this._tripPointsInfo.sort(compareByEvent)[this._tripPointsInfo.length - 1].end).format(`MMM D`);
+    const startFormattedDate = moment(this._tripPointsInfo.sort(compareByEvent)[0].start).format(`MMM D`);
+    const endFormattedDate = moment(this._tripPointsInfo.sort(compareByEvent)[this._tripPointsInfo.length - 1].end).format(`MMM D`);
 
-    if (tripPointsStartDate === tripPointsEndDate) {
-      return tripPointsStartDate;
+    if (startFormattedDate === endFormattedDate) {
+      return startFormattedDate;
     }
 
-    return `${tripPointsStartDate} – ${tripPointsEndDate}`;
+    return `${startFormattedDate} – ${endFormattedDate}`;
   }
 
   get _template() {

@@ -24,7 +24,7 @@ const getFormattedDuration = (startDateMs, endDateMs) => {
     return `${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
   }
 
-  return `${formatLeadingZero(duration.days())}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
+  return `${formatLeadingZero(Math.floor(diff / ONE_DAY_MILISECONDS))}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
 };
 
 class TripPoint extends Component {
