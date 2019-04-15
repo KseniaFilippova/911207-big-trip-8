@@ -17,7 +17,7 @@ import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 import {createTimeChartInfo} from './create-time-chart-info';
 
-const AUTHORIZATION = `Basic li0t9kjnr9080aa`;
+const AUTHORIZATION = `Basic li0t9khlnr9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 
