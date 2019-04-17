@@ -1,4 +1,4 @@
-const tripTypesData = {
+export const tripTypesData = {
   'taxi': {
     icon: `🚕`,
     action: `Taxi ride to`,
@@ -40,5 +40,3 @@ const tripTypesData = {
     action: `Visit`,
   },
 };
-
-export {tripTypesData};

@@ -1,4 +1,4 @@
-import {ModelTripPoint} from './model-trip-point';
+import ModelTripPoint from './model-trip-point';
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -12,7 +12,7 @@ const toJSON = (response) => {
   return response.json();
 };
 
-const API = class {
+export default class API {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -70,6 +70,4 @@ const API = class {
         throw err;
       });
   }
-};
-
-export {API};
+}

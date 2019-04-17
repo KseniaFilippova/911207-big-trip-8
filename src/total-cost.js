@@ -1,6 +1,6 @@
-import {Component} from './component';
+import Component from './component';
 
-class TotalCost extends Component {
+export default class TotalCost extends Component {
   constructor(data) {
     super();
     this._tripPointsInfo = data;
@@ -21,5 +21,3 @@ class TotalCost extends Component {
     `.trim();
   }
 }
-
-export {TotalCost};

@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const createMapper = (target) => {
+export const createMapper = (target) => {
   return {
     travelway: (value) => {
       target.type = value;
@@ -26,12 +26,7 @@ const createMapper = (target) => {
     },
     price: (value) => {
       const price = parseInt(value, 10);
-
-      if (price) {
-        target.basePrice = price;
-      } else {
-        target.basePrice = 0;
-      }
+      target.basePrice = price || 0;
     },
     offer: (value) => {
       const offerInfoArr = value.split(`_`);
@@ -42,13 +37,7 @@ const createMapper = (target) => {
       target.totalPrice = parseInt(value, 10);
     },
     favorite: (value) => {
-      if (value === `on`) {
-        target.isFavorite = true;
-      } else {
-        target.isFavorite = false;
-      }
+      target.isFavorite = value === `on`;
     },
   };
 };
-
-export {createMapper};

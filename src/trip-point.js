@@ -1,4 +1,4 @@
-import {Component} from './component';
+import Component from './component';
 import {tripTypesData} from './trip-types-data';
 
 import moment from 'moment';
@@ -27,7 +27,7 @@ const getFormattedDuration = (startDateMs, endDateMs) => {
   return `${formatLeadingZero(Math.floor(diff / ONE_DAY_MILISECONDS))}D ${formatLeadingZero(duration.hours())}H ${formatLeadingZero(duration.minutes())}M`;
 };
 
-class TripPoint extends Component {
+export default class TripPoint extends Component {
   constructor(data) {
     super();
     this._id = data.id;
@@ -43,6 +43,10 @@ class TripPoint extends Component {
     this._onTripPointClick = this._onTripPointClick.bind(this);
   }
 
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+
   updateData(data) {
     this._type = data.type;
     this._start = data.start;
@@ -51,10 +55,6 @@ class TripPoint extends Component {
     this._offers = data.offers;
     this._basePrice = data.basePrice;
     this._totalPrice = data.totalPrice;
-  }
-
-  set onClick(fn) {
-    this._onClick = fn;
   }
 
   _createTripPointOffer(offerInfo) {
@@ -102,5 +102,3 @@ class TripPoint extends Component {
     this._element.removeEventListener(`click`, this._onTripPointClick);
   }
 }
-
-export {TripPoint};

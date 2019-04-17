@@ -1,9 +1,9 @@
-import {Component} from './component';
+import Component from './component';
 import moment from 'moment';
 
 const compareByEvent = (a, b) => a.start - b.start;
 
-class Schedule extends Component {
+export default class Schedule extends Component {
   constructor(data) {
     super();
     this._tripPointsInfo = data;
@@ -53,5 +53,3 @@ class Schedule extends Component {
     `.trim();
   }
 }
-
-export {Schedule};

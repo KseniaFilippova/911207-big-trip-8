@@ -1,21 +1,22 @@
 import Chart from 'chart.js';
 import moment from 'moment';
 
-import {API} from './api';
-import {Schedule} from './schedule';
-import {TotalCost} from './total-cost';
 import {filtersData} from './filters-data';
-import {Filter} from './filter';
 import {sortsData} from './sorts-data';
-import {Sort} from './sort';
 import {tripTypesData} from './trip-types-data';
 import {newTripPointData} from './new-trip-point-data';
-import {TripDay} from './trip-day';
-import {TripPoint} from './trip-point';
-import {TripPointEdit} from './trip-point-edit';
 import {createMoneyChartInfo} from './create-money-chart-info';
 import {createTransportChartInfo} from './create-transport-chart-info';
 import {createTimeChartInfo} from './create-time-chart-info';
+
+import API from './api';
+import Schedule from './schedule';
+import TotalCost from './total-cost';
+import Filter from './filter';
+import Sort from './sort';
+import TripDay from './trip-day';
+import TripPoint from './trip-point';
+import TripPointEdit from './trip-point-edit';
 
 const AUTHORIZATION = `Basic li0t9khlnr9080aa`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;

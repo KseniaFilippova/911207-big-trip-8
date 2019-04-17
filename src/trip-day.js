@@ -1,6 +1,6 @@
 import {createElement} from './create-element';
 
-class TripDay {
+export default class TripDay {
   constructor(data) {
     this._date = data;
     this._day = data.split(` `)[1];
@@ -29,5 +29,3 @@ class TripDay {
     `.trim();
   }
 }
-
-export {TripDay};

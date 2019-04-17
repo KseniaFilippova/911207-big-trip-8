@@ -1,6 +1,6 @@
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createMoneyChartInfo = (moneyCountInfo) => {
+export const createMoneyChartInfo = (moneyCountInfo) => {
   return {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -66,5 +66,3 @@ const createMoneyChartInfo = (moneyCountInfo) => {
     }
   };
 };
-
-export {createMoneyChartInfo};

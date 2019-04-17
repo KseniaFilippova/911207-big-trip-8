@@ -2,7 +2,7 @@ import {tripTypesData} from './trip-types-data';
 
 const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
 
-const newTripPointData = {
+export const newTripPointData = {
   'type': getRandomElement(Object.keys(tripTypesData)),
   'date_from': new Date(),
   'date_to': new Date(Date.now() + 2 * 60 * 60 * 1000),
@@ -15,5 +15,3 @@ const newTripPointData = {
   },
   'offers': []
 };
-
-export {newTripPointData};

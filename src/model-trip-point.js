@@ -1,4 +1,4 @@
-class ModelTripPoint {
+export default class ModelTripPoint {
   constructor(data) {
     this.id = data[`id`];
     this.type = data[`type`];
@@ -11,6 +11,14 @@ class ModelTripPoint {
     this.offers = data[`offers`];
     this.basePrice = data[`base_price`];
     this.totalPrice = this._totalPrice;
+  }
+
+  get _totalPrice() {
+    const offersPrice = this.offers.filter((offer) => offer.accepted).reduce((accumulator, currentValue) => {
+      return accumulator + parseInt(currentValue.price, 10);
+    }, 0);
+
+    return offersPrice + this.basePrice;
   }
 
   toRaw() {
@@ -30,14 +38,6 @@ class ModelTripPoint {
     };
   }
 
-  get _totalPrice() {
-    const offersPrice = this.offers.filter((offer) => offer.accepted).reduce((accumulator, currentValue) => {
-      return accumulator + parseInt(currentValue.price, 10);
-    }, 0);
-
-    return offersPrice + this.basePrice;
-  }
-
   static parseTripPoint(data) {
     return new ModelTripPoint(data);
   }
@@ -46,5 +46,3 @@ class ModelTripPoint {
     return data.map(ModelTripPoint.parseTripPoint);
   }
 }
-
-export {ModelTripPoint};

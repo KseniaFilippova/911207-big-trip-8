@@ -1,6 +1,6 @@
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createTransportChartInfo = (transportCountInfo) => {
+export const createTransportChartInfo = (transportCountInfo) => {
   return {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -67,4 +67,3 @@ const createTransportChartInfo = (transportCountInfo) => {
   };
 };
 
-export {createTransportChartInfo};

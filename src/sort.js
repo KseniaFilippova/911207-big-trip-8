@@ -1,6 +1,6 @@
-import {Component} from './component';
+import Component from './component';
 
-class Sort extends Component {
+export default class Sort extends Component {
   constructor(data) {
     super();
     this._name = data.name;
@@ -40,5 +40,3 @@ class Sort extends Component {
     this._element.removeEventListener(`click`, this._onSortClick);
   }
 }
-
-export {Sort};

@@ -3,7 +3,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const getFormattedTimeDurations = (timeDurations) => timeDurations.map((timeInMs) => Math.round(moment.duration(timeInMs).as(`hours`)));
 
-const createTimeChartInfo = (timeCountInfo) => {
+export const createTimeChartInfo = (timeCountInfo) => {
   return {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -69,5 +69,3 @@ const createTimeChartInfo = (timeCountInfo) => {
     }
   };
 };
-
-export {createTimeChartInfo};

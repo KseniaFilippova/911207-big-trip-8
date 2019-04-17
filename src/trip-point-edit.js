@@ -1,4 +1,4 @@
-import {Component} from './component';
+import Component from './component';
 import {tripTypesData} from './trip-types-data';
 import {createMapper} from './create-mapper';
 
@@ -7,7 +7,7 @@ import moment from 'moment';
 
 const ESC_KEYCODE = 27;
 
-class TripPointEdit extends Component {
+export default class TripPointEdit extends Component {
   constructor(data, possibleDestinations = [], possibleOffers = []) {
     super();
     this._id = data.id;
@@ -37,18 +37,6 @@ class TripPointEdit extends Component {
     this._onDestinationChange = this._onDestinationChange.bind(this);
   }
 
-  updateData(data) {
-    this._type = data.type;
-    this._start = data.start;
-    this._end = data.end;
-    this._isFavorite = data.isFavorite;
-    this._city = data.city;
-    this._description = data.description;
-    this._pictures = data.pictures;
-    this._offers = data.offers;
-    this._basePrice = data.basePrice;
-  }
-
   set onSubmit(fn) {
     this._onSubmit = fn;
   }
@@ -59,6 +47,18 @@ class TripPointEdit extends Component {
 
   set onEscape(fn) {
     this._onEscape = fn;
+  }
+
+  updateData(data) {
+    this._type = data.type;
+    this._start = data.start;
+    this._end = data.end;
+    this._isFavorite = data.isFavorite;
+    this._city = data.city;
+    this._description = data.description;
+    this._pictures = data.pictures;
+    this._offers = data.offers;
+    this._basePrice = data.basePrice;
   }
 
   blockTripPointOnSave() {
@@ -421,5 +421,3 @@ class TripPointEdit extends Component {
     this._bind();
   }
 }
-
-export {TripPointEdit};
